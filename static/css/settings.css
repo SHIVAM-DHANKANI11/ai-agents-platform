@@ -1,0 +1,478 @@
+/* ============================================
+   MODERN SETTINGS PAGE - SaaS UI Design
+   ============================================ */
+
+/* Page Layout */
+.settings-page {
+    min-height: calc(100vh - 64px);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+    margin: -32px -40px;
+    padding: 32px 40px;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.page-title-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.page-title-section p {
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    background: #2d2d2d;
+}
+
+/* Main Layout */
+.settings-layout {
+    display: flex;
+    gap: 28px;
+}
+
+/* Sidebar Navigation */
+.settings-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.sidebar-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 24px;
+}
+
+.nav-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9ca3af;
+    margin-bottom: 16px;
+    padding-left: 4px;
+}
+
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: #4b5563;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background: #f3f4f6;
+    color: #1a1a1a;
+}
+
+.nav-item.active {
+    background: #1a1a1a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-item i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+/* Settings Content */
+.settings-content {
+    flex: 1;
+}
+
+.settings-section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.section-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 22px;
+}
+
+.section-title h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.section-title p {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* Profile Section */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.profile-avatar {
+    position: relative;
+}
+
+.avatar-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.avatar-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    background: #1a1a1a;
+    border: 3px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.avatar-upload:hover {
+    background: #2d2d2d;
+    transform: scale(1.1);
+}
+
+.profile-info h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+}
+
+.profile-info p {
+    font-size: 15px;
+    color: #9ca3af;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 10px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    padding: 14px 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-hint {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: 8px;
+}
+
+/* Toggle Switch */
+.toggle-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.toggle-group:last-child {
+    border-bottom: none;
+}
+
+.toggle-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.toggle-info p {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 56px;
+    height: 30px;
+    background: #e5e7eb;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: #3b82f6;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch.active::after {
+    left: 29px;
+}
+
+/* Danger Zone */
+.danger-zone {
+    border: 2px solid #fee2e2;
+    background: #fef2f2;
+}
+
+.danger-zone .section-icon {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #dc2626;
+}
+
+.danger-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid #fee2e2;
+}
+
+.danger-item:last-child {
+    border-bottom: none;
+}
+
+.danger-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #dc2626;
+    margin-bottom: 4px;
+}
+
+.danger-info p {
+    font-size: 14px;
+    color: #f87171;
+}
+
+.btn-danger {
+    padding: 10px 20px;
+    background: white;
+    color: #dc2626;
+    border: 2px solid #fecaca;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+}
+
+/* Notification Preferences */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 14px;
+    margin-bottom: 12px;
+}
+
+.notification-icon {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.notification-content p {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* Connected Accounts */
+.account-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 14px;
+    margin-bottom: 12px;
+}
+
+.account-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.account-icon.google {
+    background: #fef2f2;
+    color: #ea4335;
+}
+
+.account-icon.github {
+    background: #f3f4f6;
+    color: #1a1a1a;
+}
+
+.account-icon.slack {
+    background: #f0fdf4;
+    color: #4a154b;
+}
+
+.account-info {
+    flex: 1;
+}
+
+.account-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+}

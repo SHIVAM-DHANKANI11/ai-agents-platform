@@ -1,0 +1,1011 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Ultimate Dashboard V7 - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<!-- Original Ultimate Features -->
+<link rel="stylesheet" href="{% static 'css/focus-timer.css' %}">
+<link rel="stylesheet" href="{% static 'css/habit-tracker.css' %}">
+<link rel="stylesheet" href="{% static 'css/productivity-score.css' %}">
+<link rel="stylesheet" href="{% static 'css/ai-planner.css' %}">
+<link rel="stylesheet" href="{% static 'css/mood-tracker.css' %}">
+<link rel="stylesheet" href="{% static 'css/time-blocking.css' %}">
+<link rel="stylesheet" href="{% static 'css/achievements.css' %}">
+<link rel="stylesheet" href="{% static 'css/break-reminders.css' %}">
+<link rel="stylesheet" href="{% static 'css/weekly-goals.css' %}">
+<!-- New V6 Features -->
+<link rel="stylesheet" href="{% static 'css/modern-top-bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/focus-music.css' %}">
+<link rel="stylesheet" href="{% static 'css/progress-journal.css' %}">
+<link rel="stylesheet" href="{% static 'css/smart-tasks.css' %}">
+<link rel="stylesheet" href="{% static 'css/energy-scheduler.css' %}">
+<link rel="stylesheet" href="{% static 'css/quick-actions.css' %}">
+<!-- WIDGETS: Pomodoro Timer & Daily Goals -->
+<link rel="stylesheet" href="{% static 'css/pomodoro-timer.css' %}">
+<link rel="stylesheet" href="{% static 'css/daily-goals.css' %}">
+<!-- NEW V7 Features -->
+<link rel="stylesheet" href="{% static 'css/v7-features.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Top Bar with Filter Tabs -->
+<div class="modern-top-bar">
+    <div class="top-bar-content">
+        <div class="greeting-section">
+            <h1 style="font-size: 1.5rem; margin-bottom: 4px; font-weight: 700;">{{ greeting }}, {{ user.username|default:"User" }}!</h1>
+            <p style="opacity: 0.8; margin-top: 0;">{{ sub }}</p>
+        </div>
+        
+        <!-- AI Voice Assistant -->
+        <div class="voice-assistant-container" style="margin-left: auto; margin-right: 16px;">
+            <button class="voice-btn" id="voiceAssistantBtn" onclick="toggleVoiceAssistant()" title="AI Voice Assistant">
+                <i class="fas fa-microphone-slash"></i>
+            </button>
+        </div>
+
+        <!-- User Profile Menu -->
+        <div class="user-menu-container">
+            <button class="user-menu-trigger" onclick="toggleUserMenu()">
+                <div class="user-avatar">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <span>{{ user.username|first|upper }}</span>
+                    {% endif %}
+                </div>
+                <span class="username-display">{{ user.username }}</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            
+            <div class="user-menu-dropdown" id="userMenuDropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-user-info">
+                        <div class="dropdown-avatar">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                            {% else %}
+                                <span>{{ user.username|first|upper }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-name">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="dropdown-email">{{ user.email }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-divider"></div>
+                
+                <a href="{% url 'profile' %}" class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="{% url 'settings' %}" class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                
+                <div class="dropdown-divider"></div>
+                
+                <a href="{% url 'logout' %}" class="dropdown-item logout-item" onclick="handleLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="setFilter('all')">All</button>
+            <button class="filter-tab" onclick="setFilter('sales')">Sales agent</button>
+            <button class="filter-tab" onclick="setFilter('browse')">Browse agents</button>
+        </div>
+    </div>
+</div>
+
+<!-- Action Cards Grid -->
+<div class="action-cards-grid">
+    <!-- Create New Task -->
+    <div class="action-card create-task" onclick="handleAction('create-task')">
+        <div class="card-icon-container">
+            <span class="card-icon">➕</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Create new task</h3>
+            <p class="card-description">Add and organize your tasks efficiently</p>
+        </div>
+    </div>
+    
+    <!-- Connect Calendar -->
+    <div class="action-card connect-calendar" onclick="handleAction('connect-calendar')">
+        <div class="card-icon-container">
+            <span class="card-icon">📅</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Connect calendar</h3>
+            <p class="card-description">Sync your schedule and events</p>
+        </div>
+    </div>
+    
+    <!-- Browse Available Agents -->
+    <div class="action-card browse-agents" onclick="handleAction('browse-agents')">
+        <div class="card-icon-container">
+            <span class="card-icon">🤖</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Browse available agents</h3>
+            <p class="card-description">Discover AI assistants for your needs</p>
+        </div>
+    </div>
+    
+    <!-- Upload First File -->
+    <div class="action-card upload-file" onclick="handleAction('upload-file')">
+        <div class="card-icon-container">
+            <span class="card-icon">📄</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Upload your first file</h3>
+            <p class="card-description">Store and manage your documents</p>
+        </div>
+    </div>
+    
+    <!-- Explore Use Cases -->
+    <div class="action-card explore-use-cases" onclick="handleAction('explore-use-cases')">
+        <div class="card-icon-container">
+            <span class="card-icon">📚</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Explore use cases</h3>
+            <p class="card-description">Learn how to maximize productivity</p>
+        </div>
+    </div>
+    
+    <!-- Customize Workspace -->
+    <div class="action-card customize-workspace" onclick="handleAction('customize-workspace')">
+        <div class="card-icon-container">
+            <span class="card-icon">⚙️</span>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Customize workspace</h3>
+            <p class="card-description">Personalize your dashboard layout</p>
+        </div>
+    </div>
+</div>
+
+<!-- Data & Focus Row -->
+<div class="v7-data-row" style="display: grid; grid-template-columns: 1fr 300px; gap: 24px; margin-bottom: 32px;">
+    <!-- Activity Heatmap -->
+    <div class="v7-widget heatmap-widget">
+        <div class="widget-header">
+            <h3><i class="fas fa-th"></i> Productivity Heatmap</h3>
+            <span class="text-muted" style="font-size: 0.8rem;">Last 6 months</span>
+        </div>
+        <div class="heatmap-container" id="activityHeatmap" style="display: flex; gap: 4px; padding: 20px 0; overflow-x: auto;">
+            <!-- Generated by JS -->
+        </div>
+        <div class="heatmap-legend" style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; font-size: 0.7rem; color: #64748b; margin-top: 10px;">
+            <span>Less</span>
+            <div style="width: 10px; height: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 2px;"></div>
+            <div style="width: 10px; height: 10px; background: rgba(99, 102, 241, 0.4); border-radius: 2px;"></div>
+            <div style="width: 10px; height: 10px; background: rgba(99, 102, 241, 0.7); border-radius: 2px;"></div>
+            <div style="width: 10px; height: 10px; background: rgba(99, 102, 241, 1); border-radius: 2px;"></div>
+            <span>More</span>
+        </div>
+    </div>
+
+    <!-- Quick Notes Widget -->
+    <div class="v7-widget notes-widget">
+        <div class="widget-header">
+            <h3><i class="fas fa-sticky-note"></i> Brain Dump</h3>
+        </div>
+        <textarea id="quickNotesArea" placeholder="Capture ideas instantly..." style="width: 100%; height: 120px; background: transparent; border: none; outline: none; resize: none; color: inherit; font-family: inherit; font-size: 0.95rem;"></textarea>
+        <div class="notes-footer" style="padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span id="noteSaveStatus" style="font-size: 0.75rem; color: #10b981; opacity: 0;"><i class="fas fa-check"></i> Saved</span>
+            <button class="icon-btn-v7" onclick="clearNotes()" style="font-size: 0.75rem; opacity: 0.6;"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Section (Original Streak Widgets) -->
+<div class="welcome-section" style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    
+    <!-- Streak Widget -->
+    <div class="streak-widget" style="display: flex; gap: 16px; align-items: center;">
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🔥 {{ streak_info.current_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Day Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🏆 {{ streak_info.longest_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Best Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">✓ {{ streak_info.total_completed }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Tasks Done</div>
+        </div>
+    </div>
+</div>
+
+<!-- Smart Task Prioritization -->
+<div class="task-prioritization-widget">
+    <div class="prioritization-header">
+        <div class="prioritization-title">
+            🎯 Smart Task Prioritization
+        </div>
+        <button class="add-task-btn" onclick="openTaskModal()">+ Add Task</button>
+    </div>
+    
+    <div class="tasks-list" id="tasksList">
+        <div class="tasks-empty-state">
+            <div class="tasks-empty-icon">📋</div>
+            <p>No tasks yet. Add your first task!</p>
+        </div>
+    </div>
+    
+    <!-- Eisenhower Matrix -->
+    <div class="eisenhower-matrix">
+        <div class="matrix-quadrant matrix-q1">
+            <div class="matrix-label">Urgent & Important</div>
+            <div class="matrix-tasks-count" id="q1Count">0 tasks</div>
+        </div>
+        <div class="matrix-quadrant matrix-q2">
+            <div class="matrix-label">Important, Not Urgent</div>
+            <div class="matrix-tasks-count" id="q2Count">0 tasks</div>
+        </div>
+        <div class="matrix-quadrant matrix-q3">
+            <div class="matrix-label">Urgent, Not Important</div>
+            <div class="matrix-tasks-count" id="q3Count">0 tasks</div>
+        </div>
+        <div class="matrix-quadrant matrix-q4">
+            <div class="matrix-label">Neither</div>
+            <div class="matrix-tasks-count" id="q4Count">0 tasks</div>
+        </div>
+    </div>
+</div>
+
+<!-- Energy-Based Scheduling -->
+<div class="energy-scheduler-widget">
+    <div class="energy-scheduler-header">
+        <div class="energy-scheduler-title">
+            ⚡ Energy-Based Scheduling
+        </div>
+        <div class="energy-level-indicator energy-level-medium" id="currentEnergyLevel">
+            <span>⚡</span>
+            <span>Moderate Energy</span>
+        </div>
+    </div>
+    
+    <div class="energy-selector">
+        <button class="energy-btn selected" onclick="setEnergyLevel('high')" data-energy="high">
+            🔥 High Energy
+        </button>
+        <button class="energy-btn" onclick="setEnergyLevel('medium')" data-energy="medium">
+            ⚡ Moderate Energy
+        </button>
+        <button class="energy-btn" onclick="setEnergyLevel('low')" data-energy="low">
+            😴 Low Energy
+        </button>
+    </div>
+    
+    <div class="time-slots-container" id="timeSlotsContainer">
+        <!-- Time slots will be rendered here -->
+    </div>
+    
+    <div class="energy-recommendations">
+        <div class="recommendation-title">
+            💡 Personalized Recommendations
+        </div>
+        <div class="recommendation-list" id="recommendationsList">
+            <!-- Recommendations based on energy level -->
+        </div>
+    </div>
+</div>
+
+<!-- Weekly Goals Tracker -->
+<div class="weekly-goals-widget">
+    <div class="weekly-goals-header">
+        <div class="weekly-goals-title">
+            🎯 Weekly Goals
+        </div>
+        <div class="week-progress-badge" id="weekProgressBadge">Week 12</div>
+    </div>
+    
+    <div class="goals-container" id="goalsContainer">
+        <div style="text-align: center; padding: 40px; color: #6b7280;">
+            <i class="fas fa-bullseye" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+            <p>No goals set for this week. Set your first goal!</p>
+        </div>
+    </div>
+    
+    <div class="weekly-overview">
+        <div class="day-column">
+            <div class="day-name">Mon</div>
+            <div class="day-indicator" id="dayMon">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Tue</div>
+            <div class="day-indicator" id="dayTue">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Wed</div>
+            <div class="day-indicator" id="dayWed">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Thu</div>
+            <div class="day-indicator" id="dayThu">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Fri</div>
+            <div class="day-indicator" id="dayFri">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Sat</div>
+            <div class="day-indicator" id="daySat">📅</div>
+        </div>
+        <div class="day-column">
+            <div class="day-name">Sun</div>
+            <div class="day-indicator" id="daySun">📅</div>
+        </div>
+    </div>
+</div>
+
+<!-- Focus Music Player -->
+<div class="focus-music-widget">
+    <div class="focus-music-header">
+        <div class="focus-music-title">
+            🎵 Focus Music Player
+        </div>
+        <div class="now-playing-label" id="nowPlayingLabel">Select a soundscape</div>
+    </div>
+    
+    <!-- Hidden YouTube Player Container -->
+    <div id="youtube-player-container" style="display: none;"></div>
+    
+    <div class="music-player-container">
+        <div class="sound-scapes">
+            <div class="sound-scape-card" onclick="selectSoundscape('rain')" data-sound="rain">
+                <span class="sound-scape-icon">🌧️</span>
+                <span class="sound-scape-name">Rain</span>
+            </div>
+            <div class="sound-scape-card" onclick="selectSoundscape('ocean')" data-sound="ocean">
+                <span class="sound-scape-icon">🌊</span>
+                <span class="sound-scape-name">Ocean</span>
+            </div>
+            <div class="sound-scape-card" onclick="selectSoundscape('forest')" data-sound="forest">
+                <span class="sound-scape-icon">🌲</span>
+                <span class="sound-scape-name">Forest</span>
+            </div>
+            <div class="sound-scape-card" onclick="selectSoundscape('white-noise')" data-sound="white-noise">
+                <span class="sound-scape-icon">📻</span>
+                <span class="sound-scape-name">White Noise</span>
+            </div>
+            <div class="sound-scape-card" onclick="selectSoundscape('coffee-shop')" data-sound="coffee-shop">
+                <span class="sound-scape-icon">☕</span>
+                <span class="sound-scape-name">Coffee Shop</span>
+            </div>
+            <div class="sound-scape-card" onclick="selectSoundscape('binaural')" data-sound="binaural">
+                <span class="sound-scape-icon">⚡</span>
+                <span class="sound-scape-name">Binaural Beats</span>
+            </div>
+        </div>
+        
+        <div class="volume-control">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" min="0" max="100" value="50" oninput="setVolume(this.value)">
+            <span class="volume-value" id="volumeValue">50%</span>
+        </div>
+        
+        <div class="visualizer-container paused" id="visualizerContainer">
+            <div class="audio-visualizer">
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+            </div>
+        </div>
+        
+        <div class="music-timer">
+            <div class="music-timer-label">Sleep Timer:</div>
+            <div class="music-timer-options">
+                <button class="timer-option-btn" onclick="setSleepTimer(15)">15 min</button>
+                <button class="timer-option-btn" onclick="setSleepTimer(30)">30 min</button>
+                <button class="timer-option-btn active" onclick="setSleepTimer(60)">60 min</button>
+                <button class="timer-option-btn" onclick="setSleepTimer(90)">90 min</button>
+            </div>
+        </div>
+        
+        <div class="playback-controls">
+            <button class="secondary-control-btn" onclick="previousSoundscape()">⏮️</button>
+            <button class="play-btn" id="playBtn" onclick="togglePlay()">▶️</button>
+            <button class="secondary-control-btn" onclick="nextSoundscape()">⏭️</button>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Journal -->
+<div class="progress-journal-widget">
+    <div class="progress-journal-header">
+        <div class="progress-journal-title">
+            📔 Progress Journal
+        </div>
+        <button class="journal-add-btn" onclick="openJournalModal()">+ Add Entry</button>
+    </div>
+    
+    <div class="journal-stats">
+        <div class="journal-stat">
+            <div class="journal-stat-value" id="totalEntries">0</div>
+            <div class="journal-stat-label">Total Entries</div>
+        </div>
+        <div class="journal-stat">
+            <div class="journal-stat-value" id="currentStreak">0</div>
+            <div class="journal-stat-label">Day Streak</div>
+        </div>
+        <div class="journal-stat">
+            <div class="journal-stat-value" id="totalWins">0</div>
+            <div class="journal-stat-label">Wins Logged</div>
+        </div>
+        <div class="journal-stat">
+            <div class="journal-stat-value" id="avgMood">-</div>
+            <div class="journal-stat-label">Avg Mood</div>
+        </div>
+    </div>
+    
+    <div class="journal-entries-container" id="journalContainer">
+        <div class="journal-empty-state">
+            <div class="journal-empty-icon">📝</div>
+            <p>No journal entries yet. Start your reflection journey!</p>
+        </div>
+    </div>
+</div>
+
+<!-- Pomodoro Timer -->
+<div class="pomodoro-widget">
+    <div class="pomodoro-header">
+        <div class="pomodoro-title">
+            🍅 Pomodoro Focus
+        </div>
+        <div class="pomodoro-stats">
+            <div class="pomodoro-stat-item">
+                <span class="stat-value" id="completedPomodoros">0</span>
+                <span class="stat-label">Completed</span>
+            </div>
+            <div class="pomodoro-stat-item">
+                <span class="stat-value" id="totalFocusTime">0h 0m</span>
+                <span class="stat-label">Focus Time</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pomodoro-display">
+        <div class="pomodoro-timer" id="timerDisplay">25:00</div>
+        <div class="pomodoro-mode" id="currentMode">🍅 Focus Time</div>
+    </div>
+    
+    <div class="pomodoro-controls">
+        <button class="pomo-btn pomo-btn-primary" id="playPauseBtn" onclick="startPomodoro()">
+            <span>▶️</span> Start
+        </button>
+        <button class="pomo-btn pomo-btn-secondary" onclick="resetPomodoro()">
+            <span>🔄</span> Reset
+        </button>
+    </div>
+    
+    <div class="pomodoro-modes">
+        <button class="mode-btn active" data-mode="pomodoro" onclick="switchPomodoroMode('pomodoro')">
+            🍅 Focus
+        </button>
+        <button class="mode-btn" data-mode="shortBreak" onclick="switchPomodoroMode('shortBreak')">
+            ☕ Short Break
+        </button>
+        <button class="mode-btn" data-mode="longBreak" onclick="switchPomodoroMode('longBreak')">
+            🌟 Long Break
+        </button>
+    </div>
+</div>
+
+<!-- Daily Goals -->
+<div class="daily-goals-widget">
+    <div class="goals-header">
+        <div class="goals-title">
+            🎯 Daily Goals
+        </div>
+        <div class="goals-progress">
+            <div class="progress-circle">
+                <svg class="progress-ring" width="50" height="50">
+                    <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="transparent" r="20" cx="25" cy="25"/>
+                    <circle id="progressRing" class="progress-ring-circle" stroke="white" stroke-width="4" fill="transparent" r="20" cx="25" cy="25" stroke-dasharray="125.6" stroke-dashoffset="125.6"/>
+                </svg>
+                <span class="progress-text" id="goalsPercentage">0%</span>
+            </div>
+            <span class="goals-percentage" id="goalsCount">0/0</span>
+        </div>
+    </div>
+    
+    <div class="goals-list" id="goalsList">
+        <!-- Goals will be dynamically loaded here -->
+    </div>
+    
+    <button class="add-goal-btn" onclick="showAddGoalModal()">
+        <span>➕</span> Add Your First Goal
+    </button>
+</div>
+
+<!-- Add Goal Modal -->
+<div id="addGoalModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">Add Daily Goal</div>
+        <input type="text" id="goalInput" class="modal-input" placeholder="What do you want to achieve today?" maxlength="100">
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-secondary" onclick="closeAddGoalModal()">Cancel</button>
+            <button class="modal-btn modal-btn-primary" onclick="submitGoal()">Add Goal</button>
+        </div>
+    </div>
+</div>
+
+<!-- V7 FEATURE 1: AI Auto-Delegation Kanban -->
+<div class="v7-widget ai-kanban-widget">
+    <div class="v7-header">
+        <div class="v7-title">🤖 AI Auto-Delegation Pipeline</div>
+    </div>
+    <div class="kanban-board" id="aiKanbanBoard">
+        <div class="kanban-col" id="colBacklog" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)">
+            <h3>Backlog</h3>
+            <div class="kanban-items">
+                <!-- Tasks loaded by JS -->
+            </div>
+        </div>
+        <div class="kanban-col ai-col" id="colAIPlanner" ondrop="drop(event, 'planner')" ondragover="allowDrop(event)">
+            <h3>🧠 AI Planner</h3>
+            <div class="kanban-items"></div>
+        </div>
+        <div class="kanban-col ai-col" id="colAIExecutor" ondrop="drop(event, 'executor')" ondragover="allowDrop(event)">
+            <h3>⚡ AI Executor</h3>
+            <div class="kanban-items"></div>
+        </div>
+        <div class="kanban-col" id="colDone" ondrop="drop(event, 'done')" ondragover="allowDrop(event)">
+            <h3>Done</h3>
+            <div class="kanban-items"></div>
+        </div>
+    </div>
+</div>
+
+<!-- V7 FEATURE 2: Task Mind-Map -->
+<div class="v7-widget mindmap-widget">
+    <div class="v7-header">
+        <div class="v7-title">🧠 Interactive Task Mind-Map</div>
+        <button class="mindmap-regen" onclick="generateDynamicMindMap()">↻ Regenerate</button>
+    </div>
+    <div class="mindmap-container" id="mindmapContainer">
+        <!-- Visualization renders here -->
+    </div>
+</div>
+
+</div>
+
+<!-- V7 FEATURE 4: AI Voice-to-Task Neural Journal -->
+<div class="v7-widget voice-journal-widget">
+    <div class="v7-header">
+        <div class="v7-title">🎙️ AI Neural Journal & Tasker</div>
+        <div class="journal-status" id="journalStatus">Ready to transcribe</div>
+    </div>
+    <div class="voice-journal-content">
+        <div class="record-area" id="journalRecordArea">
+            <div class="recording-pulser"></div>
+            <button class="big-record-btn" id="startJournalBtn" onclick="toggleJournalRecording()">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <p class="record-hint">Speak your thoughts. AI will extract tasks & insights.</p>
+        </div>
+        <div class="transcription-stream" id="transcriptionStream"></div>
+        <div class="extracted-tasks-preview" id="extractedTasksPreview">
+            <!-- Tasks extracted by AI appear here -->
+        </div>
+    </div>
+</div>
+
+<!-- V7 FEATURE 5: AI Productivity Forecaster -->
+<div class="v7-widget forecaster-widget">
+    <div class="v7-header">
+        <div class="v7-title">🔮 Neural Productivity Forecast</div>
+    </div>
+    <div class="forecast-stats">
+        <div class="forecast-item">
+            <span class="forecast-val" id="forecastVelocity">0.0</span>
+            <span class="forecast-label">Tasks / Day</span>
+        </div>
+        <div class="forecast-item">
+            <span class="forecast-val" id="forecastDays">0</span>
+            <span class="forecast-label">Days to Clear</span>
+        </div>
+        <div class="forecast-item">
+            <span class="forecast-val" id="forecastConfidence">0%</span>
+            <span class="forecast-label">AI Confidence</span>
+        </div>
+    </div>
+    <div class="forecast-prediction" id="forecastText" style="margin-top: 15px; font-size: 0.9rem; color: #94a3b8; text-align: center;">
+        Analyzing your velocity...
+    </div>
+</div>
+<div id="zenModeOverlay" class="zen-overlay">
+    <div class="zen-content">
+        <h1 class="zen-timer" id="zenTimer">25:00</h1>
+        <p class="zen-quote" id="zenQuote">"The only way to do great work is to love what you do."</p>
+        <div class="zen-controls">
+            <button class="zen-btn leave-zen" onclick="toggleZenMode()">Exit Deep Work</button>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Voice Waveform Overlay -->
+<div class="voice-wave" id="voiceWaveform">
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div style="color: white; font-size: 0.8rem; margin-left: 10px; font-weight: 600;">AI Listening...</div>
+</div>
+
+<!-- Task Creation Modal -->
+<div class="task-modal-overlay" id="taskModal">
+    <div class="task-modal">
+        <div class="task-modal-header">
+            <h2 class="task-modal-title">Create New Task</h2>
+            <button class="task-modal-close" onclick="closeTaskModal()">&times;</button>
+        </div>
+        <div class="task-modal-body">
+            <div class="task-form-group">
+                <label for="taskTitle">Task Title</label>
+                <input type="text" id="taskTitle" placeholder="What needs to be done?">
+            </div>
+            <div class="task-form-group">
+                <label for="taskDesc">Description</label>
+                <textarea id="taskDesc" rows="3" placeholder="Add more details..."></textarea>
+            </div>
+            <div class="task-form-row">
+                <div class="task-form-group">
+                    <label for="taskPriority">Priority</label>
+                    <select id="taskPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="task-form-group">
+                    <label for="taskDueDate">Due Date</label>
+                    <input type="date" id="taskDueDate">
+                </div>
+            </div>
+            <div class="task-modal-footer">
+                <button class="btn-cancel" onclick="closeTaskModal()">Cancel</button>
+                <button class="btn-save" id="saveTaskBtn" onclick="saveTask()">Save Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/focus-songs-library.js' %}"></script>
+<script src="{% static 'js/focus-music-player-ultimate-v2.js' %}"></script>
+<!-- NEW WIDGETS JS -->
+<script src="{% static 'js/pomodoro-timer.js' %}"></script>
+<script src="{% static 'js/daily-goals.js' %}"></script>
+<script src="{% static 'js/v7-advanced.js' %}"></script>
+<script src="{% static 'js/v7-ai-voice.js' %}"></script>
+<script>
+// Focus Music Player is now initialized automatically with REAL SONGS!
+// The focus-songs-library.js contains 18 actual audio tracks (6 categories × 3 songs each)
+
+// Advanced V7 Features are loaded via v7-advanced.js
+
+// Modern Top Bar - Filter Functionality
+function setFilter(filterType) {
+    // Remove active class from all tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Add active class to selected tab
+    const selectedTab = event.target;
+    selectedTab.classList.add('active');
+    
+    console.log('Filter set to:', filterType);
+    
+    // Filter logic can be added here based on your needs
+    // For now, it just updates the UI
+    switch(filterType) {
+        case 'all':
+            showAllCards();
+            break;
+        case 'sales':
+            filterByType('sales');
+            break;
+        case 'browse':
+            filterByType('browse');
+            break;
+    }
+}
+
+function showAllCards() {
+    document.querySelectorAll('.action-card').forEach(card => {
+        card.style.display = 'flex';
+    });
+}
+
+function filterByType(type) {
+    // Implement filtering logic as needed
+    console.log('Filtering by:', type);
+}
+
+// Action Card Handlers
+function handleAction(actionType) {
+    console.log('Action clicked:', actionType);
+    
+    switch(actionType) {
+        case 'create-task':
+            // Open task creation modal or navigate to tasks page
+            window.location.href = '/tasks/';
+            break;
+        
+        case 'connect-calendar':
+            // Navigate to calendar page
+            window.location.href = '/calendar/';
+            break;
+        
+        case 'browse-agents':
+            // Navigate to assistants page
+            window.location.href = '/assistants/';
+            break;
+        
+        case 'upload-file':
+            // Navigate to files page
+            window.location.href = '/files/';
+            break;
+        
+        case 'explore-use-cases':
+            // Show use cases modal or navigate to help page
+            window.location.href = '/help/';
+            break;
+        
+        case 'customize-workspace':
+            // Navigate to settings page
+            window.location.href = '/settings/';
+            break;
+        
+        default:
+            console.log('Unknown action:', actionType);
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Dashboard Ultimate V7 loaded with Modern Top Bar! 🎨✨');
+    renderSmartTasks();
+});
+
+// Smart Task Prioritization & Modal Logic
+function openTaskModal() {
+    document.getElementById('taskModal').classList.add('active');
+    document.getElementById('taskTitle').focus();
+    
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('taskDueDate').value = today;
+}
+
+function closeTaskModal() {
+    document.getElementById('taskModal').classList.remove('active');
+    // Clear inputs
+    document.getElementById('taskTitle').value = '';
+    document.getElementById('taskDesc').value = '';
+    document.getElementById('taskPriority').value = 'medium';
+}
+
+async function saveTask() {
+    const title = document.getElementById('taskTitle').value;
+    const description = document.getElementById('taskDesc').value;
+    const priority = document.getElementById('taskPriority').value;
+    const due_date = document.getElementById('taskDueDate').value;
+    
+    if (!title) {
+        alert('Please enter a task title');
+        return;
+    }
+    
+    const saveBtn = document.getElementById('saveTaskBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Saving...';
+    
+    try {
+        const response = await fetch('/api/tasks/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                title,
+                description,
+                priority,
+                due_date
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeTaskModal();
+            renderSmartTasks();
+            if (window.showNotification) {
+                window.showNotification('Task created successfully!', 'success');
+            }
+        } else {
+            alert('Error creating task: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save task');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'Save Task';
+    }
+}
+
+async function renderSmartTasks() {
+    const listContainer = document.getElementById('tasksList');
+    if (!listContainer) return;
+    
+    try {
+        const response = await fetch('/api/tasks/?filter=active');
+        const data = await response.json();
+        
+        if (data.success) {
+            let tasks = data.tasks;
+            
+            if (tasks.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="tasks-empty-state">
+                        <div class="empty-icon">📝</div>
+                        <p>No active tasks. Click "+ Add Task" to start!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // "Smart" Prioritization Sort Logic
+            const priorityWeight = { 'high': 3, 'medium': 2, 'low': 1 };
+            tasks.sort((a, b) => {
+                // 1. Sort by priority
+                if (priorityWeight[b.priority] !== priorityWeight[a.priority]) {
+                    return priorityWeight[b.priority] - priorityWeight[a.priority];
+                }
+                // 2. Sort by due date (nulls last)
+                if (!a.due_date && b.due_date) return 1;
+                if (a.due_date && !b.due_date) return -1;
+                if (a.due_date && b.due_date) {
+                    return new Date(a.due_date) - new Date(b.due_date);
+                }
+                return 0;
+            });
+            
+            listContainer.innerHTML = tasks.slice(0, 5).map(task => `
+                <div class="smart-task-item" id="task-${task.id}">
+                    <div class="task-checkbox-v7" onclick="toggleTaskV7(${task.id})">
+                        <i class="fas fa-check" style="display: none;"></i>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-title-v7">${escapeHtml(task.title)}</div>
+                        <div class="task-meta-v7">
+                            <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                            ${task.due_date ? `<span><i class="far fa-calendar"></i> ${formatDateV7(task.due_date)}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+    }
+}
+
+async function toggleTaskV7(taskId) {
+    const taskItem = document.getElementById(`task-${taskId}`);
+    const checkbox = taskItem.querySelector('.task-checkbox-v7');
+    const checkIcon = checkbox.querySelector('i');
+    
+    taskItem.classList.add('completed');
+    checkIcon.style.display = 'block';
+    
+    try {
+        const response = await fetch(`/api/tasks/${taskId}/toggle/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            setTimeout(() => {
+                renderSmartTasks();
+            }, 500);
+        }
+    } catch (error) {
+        console.error('Error toggling task:', error);
+        taskItem.classList.remove('completed');
+        checkIcon.style.display = 'none';
+    }
+}
+
+function formatDateV7(dateStr) {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    
+    if (isToday) return 'Today';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// User Menu Functions
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenuDropdown');
+    const trigger = document.querySelector('.user-menu-trigger');
+    
+    if (menu.classList.contains('active')) {
+        menu.classList.remove('active');
+        trigger.classList.remove('active');
+    } else {
+        menu.classList.add('active');
+        trigger.classList.add('active');
+    }
+}
+
+function handleLogout(event) {
+    event.preventDefault();
+    window.location.href = '/logout/';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    const userMenu = document.querySelector('.user-menu-container');
+    if (userMenu && !userMenu.contains(e.target)) {
+        const menu = document.getElementById('userMenuDropdown');
+        const trigger = document.querySelector('.user-menu-trigger');
+        if (menu && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            trigger.classList.remove('active');
+        }
+    }
+});
+
+// Final Action Handler
+function handleAction(actionType) {
+    console.log('Action clicked:', actionType);
+    if (actionType === 'create-task') {
+        openTaskModal();
+        return;
+    }
+    
+    switch(actionType) {
+        case 'connect-calendar': window.location.href = '/calendar/'; break;
+        case 'browse-agents': window.location.href = '/assistants/'; break;
+        case 'upload-file': window.location.href = '/files/'; break;
+        case 'explore-use-cases': window.location.href = '/help/'; break;
+        case 'customize-workspace': window.location.href = '/settings/'; break;
+        default: console.log('Unknown action:', actionType);
+    }
+}
+
+</script>
+{% endblock %}

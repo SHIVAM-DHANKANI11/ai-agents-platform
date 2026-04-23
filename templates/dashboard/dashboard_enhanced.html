@@ -1,0 +1,411 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Dashboard - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/focus-timer.css' %}">
+<link rel="stylesheet" href="{% static 'css/quick-actions.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="welcome-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+        <h1>Good afternoon, {{ user.username|default:"User" }}!</h1>
+        <p>Ready to assign your task?</p>
+    </div>
+    
+    <!-- Streak Widget -->
+    <div class="streak-widget" style="display: flex; gap: 16px; align-items: center;">
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🔥 {{ streak_info.current_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Day Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🏆 {{ streak_info.longest_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Best Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">✓ {{ streak_info.total_completed }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Tasks Done</div>
+        </div>
+    </div>
+    
+    <a href="{% url 'dashboard_pro' %}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+        <i class="fas fa-moon"></i>
+        <span>Dark Mode</span>
+    </a>
+</div>
+
+<!-- Focus Timer Widget -->
+<div class="focus-timer-widget">
+    <div class="timer-header">
+        <div class="timer-title">🎯 Focus Timer</div>
+        <div class="timer-presets">
+            <button class="timer-preset-btn active" onclick="setTimerDuration(25)">25m</button>
+            <button class="timer-preset-btn" onclick="setTimerDuration(45)">45m</button>
+            <button class="timer-preset-btn" onclick="setTimerDuration(60)">60m</button>
+        </div>
+    </div>
+    
+    <div class="timer-display">
+        <div class="timer-time" id="timerDisplay">25:00</div>
+        <div class="timer-label" id="timerLabel">Focus Session</div>
+        <div class="timer-progress">
+            <div class="timer-progress-bar" id="timerProgress" style="width: 0%;"></div>
+        </div>
+    </div>
+    
+    <div class="timer-controls">
+        <button class="timer-btn timer-btn-primary" id="startPauseBtn" onclick="toggleTimer()">
+            <i class="fas fa-play"></i>
+            <span>Start Focus</span>
+        </button>
+        <button class="timer-btn timer-btn-secondary" onclick="resetTimer()">
+            <i class="fas fa-redo"></i>
+            <span>Reset</span>
+        </button>
+    </div>
+    
+    <div class="timer-stats">
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="sessionsToday">0</div>
+            <div class="timer-stat-label">Sessions Today</div>
+        </div>
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="totalFocusTime">0m</div>
+            <div class="timer-stat-label">Focus Time</div>
+        </div>
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="currentStreak">{{ streak_info.current_streak }}</div>
+            <div class="timer-stat-label">Day Streak</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions FAB -->
+<div class="fab-container">
+    <button class="fab-button" onclick="toggleQuickActions()" title="Quick Actions">
+        <i class="fas fa-bolt"></i>
+    </button>
+</div>
+
+<!-- Quick Actions Panel -->
+<div class="quick-actions-panel" id="quickActionsPanel">
+    <div class="quick-actions-header">
+        <div class="quick-actions-title">⚡ Quick Actions</div>
+        <button class="quick-actions-close" onclick="toggleQuickActions()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'tasks' %}'">
+        <div class="quick-action-icon purple">
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Create Task</div>
+            <div class="quick-action-desc">Add a new task instantly</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'chat' %}'">
+        <div class="quick-action-icon green">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Ask AI</div>
+            <div class="quick-action-desc">Chat with AI assistant</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'calendar' %}'">
+        <div class="quick-action-icon blue">
+            <i class="fas fa-calendar-plus"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Schedule Event</div>
+            <div class="quick-action-desc">Add calendar event</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'files' %}'">
+        <div class="quick-action-icon orange">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Upload File</div>
+            <div class="quick-action-desc">Upload document for AI summary</div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Header Tabs -->
+<div class="content-header">
+    <button class="tab-btn active">All</button>
+    <button class="tab-btn">Sales agent</button>
+    <button class="tab-btn">Browse agents</button>
+</div>
+
+<!-- Actions Grid -->
+<div class="actions-grid">
+    <!-- Create New Task -->
+    <a href="{% url 'tasks' %}" class="action-card">
+        <div class="card-icon blue">
+            <i class="fas fa-plus"></i>
+        </div>
+        <h3>Create new task</h3>
+        <p>Start something new</p>
+    </a>
+    
+    <!-- Connect Calendar -->
+    <a href="{% url 'calendar' %}" class="action-card">
+        <div class="card-icon yellow">
+            <i class="fas fa-calendar"></i>
+        </div>
+        <h3>Connect calendar</h3>
+        <p>Sync your schedule</p>
+    </a>
+    
+    <!-- Browse Available Agents -->
+    <a href="{% url 'assistants' %}" class="action-card">
+        <div class="card-icon purple">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h3>Browse agents</h3>
+        <p>See what agents can do</p>
+    </a>
+    
+    <!-- Upload Your First File -->
+    <a href="{% url 'files' %}" class="action-card">
+        <div class="card-icon green">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <h3>Upload file</h3>
+        <p>Drop in a document</p>
+    </a>
+    
+    <!-- Explore Use Cases -->
+    <a href="{% url 'chat' %}" class="action-card">
+        <div class="card-icon orange">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+        <h3>Explore use cases</h3>
+        <p>See what's possible</p>
+    </a>
+    
+    <!-- Customize Workspaces -->
+    <a href="{% url 'settings' %}" class="action-card">
+        <div class="card-icon pink">
+            <i class="fas fa-cog"></i>
+        </div>
+        <h3>Customize workspace</h3>
+        <p>Make it yours</p>
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Focus Timer Functionality
+let timerInterval;
+let timeLeft = 25 * 60; // 25 minutes in seconds
+let totalTime = 25 * 60;
+let isRunning = false;
+let sessionsCompleted = 0;
+let totalFocusMinutes = 0;
+
+// Initialize timer display
+updateTimerDisplay();
+
+function setTimerDuration(minutes) {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = minutes * 60;
+    totalTime = minutes * 60;
+    
+    // Update active button
+    document.querySelectorAll('.timer-preset-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    updateTimerDisplay();
+    resetTimerUI();
+}
+
+function toggleTimer() {
+    if (isRunning) {
+        pauseTimer();
+    } else {
+        startTimer();
+    }
+}
+
+function startTimer() {
+    isRunning = true;
+    document.getElementById('startPauseBtn').innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+    document.getElementById('timerLabel').textContent = 'Focusing...';
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        updateProgressBar();
+        
+        if (timeLeft <= 0) {
+            completeSession();
+        }
+    }, 1000);
+}
+
+function pauseTimer() {
+    isRunning = false;
+    clearInterval(timerInterval);
+    document.getElementById('startPauseBtn').innerHTML = '<i class="fas fa-play"></i><span>Resume</span>';
+    document.getElementById('timerLabel').textContent = 'Paused';
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = totalTime;
+    updateTimerDisplay();
+    resetTimerUI();
+    updateProgressBar();
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timerDisplay').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function updateProgressBar() {
+    const progress = ((totalTime - timeLeft) / totalTime) * 100;
+    document.getElementById('timerProgress').style.width = `${progress}%`;
+}
+
+function resetTimerUI() {
+    document.getElementById('startPauseBtn').innerHTML = '<i class="fas fa-play"></i><span>Start Focus</span>';
+    document.getElementById('timerLabel').textContent = 'Focus Session';
+}
+
+function completeSession() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    sessionsCompleted++;
+    totalFocusMinutes += Math.round(totalTime / 60);
+    
+    // Update stats
+    document.getElementById('sessionsToday').textContent = sessionsCompleted;
+    document.getElementById('totalFocusTime').textContent = `${totalFocusMinutes}m`;
+    
+    // Show completion modal
+    showCompletionModal();
+    
+    // Reset timer
+    timeLeft = totalTime;
+    updateTimerDisplay();
+    resetTimerUI();
+    updateProgressBar();
+}
+
+function showCompletionModal() {
+    const modal = document.createElement('div');
+    modal.className = 'timer-modal-overlay active';
+    modal.innerHTML = `
+        <div class="timer-modal">
+            <div class="timer-modal-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="timer-modal-title">Session Complete! 🎉</div>
+            <div class="timer-modal-message">
+                Great job! You've completed ${Math.round(totalTime / 60)} minutes of focused work.
+            </div>
+            <div class="timer-modal-actions">
+                <button class="timer-btn timer-btn-primary" onclick="this.closest('.timer-modal-overlay').remove()">
+                    Awesome!
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Play notification sound (optional)
+    playNotificationSound();
+}
+
+function playNotificationSound() {
+    // Simple beep using Web Audio API
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+        console.log('Audio not supported');
+    }
+}
+
+// Quick Actions Toggle
+function toggleQuickActions() {
+    const panel = document.getElementById('quickActionsPanel');
+    panel.classList.toggle('active');
+}
+
+// Close quick actions when clicking outside
+document.addEventListener('click', function(e) {
+    const panel = document.getElementById('quickActionsPanel');
+    const fab = document.querySelector('.fab-button');
+    
+    if (panel && !panel.contains(e.target) && !fab.contains(e.target)) {
+        panel.classList.remove('active');
+    }
+});
+
+// Load saved stats from localStorage
+function loadSavedStats() {
+    const today = new Date().toDateString();
+    const lastVisit = localStorage.getItem('lastVisitDate');
+    
+    if (lastVisit !== today) {
+        // New day, reset sessions but keep streak
+        localStorage.setItem('lastVisitDate', today);
+        localStorage.setItem('sessionsToday', '0');
+        localStorage.setItem('totalFocusTime', '0');
+    } else {
+        // Same day, restore stats
+        sessionsCompleted = parseInt(localStorage.getItem('sessionsToday') || '0');
+        totalFocusMinutes = parseInt(localStorage.getItem('totalFocusTime') || '0');
+        
+        document.getElementById('sessionsToday').textContent = sessionsCompleted;
+        document.getElementById('totalFocusTime').textContent = `${totalFocusMinutes}m`;
+    }
+}
+
+// Save stats to localStorage
+function saveStats() {
+    localStorage.setItem('sessionsToday', sessionsCompleted.toString());
+    localStorage.setItem('totalFocusTime', totalFocusMinutes.toString());
+}
+
+// Auto-save stats periodically
+setInterval(saveStats, 5000);
+
+// Load stats on page load
+loadSavedStats();
+</script>
+{% endblock %}

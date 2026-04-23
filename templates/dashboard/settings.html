@@ -1,0 +1,394 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Settings - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1>Settings</h1>
+            <p>Manage your account and preferences</p>
+        </div>
+        <button class="btn-save" onclick="saveSettings()">
+            <i class="fas fa-check"></i>
+            <span>Save Changes</span>
+        </button>
+    </div>
+    
+    <!-- Main Layout -->
+    <div class="settings-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="settings-sidebar">
+            <div class="sidebar-card">
+                <div class="nav-title">Settings</div>
+                <nav class="nav-list">
+                    <a href="#profile" class="nav-item active" onclick="showSection('profile', this)">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#account" class="nav-item" onclick="showSection('account', this)">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Account</span>
+                    </a>
+                    <a href="#notifications" class="nav-item" onclick="showSection('notifications', this)">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                    <a href="#integrations" class="nav-item" onclick="showSection('integrations', this)">
+                        <i class="fas fa-plug"></i>
+                        <span>Integrations</span>
+                    </a>
+                    <a href="#danger" class="nav-item" onclick="showSection('danger', this)">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Danger Zone</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+        
+        <!-- Settings Content -->
+        <div class="settings-content">
+            <!-- Profile Section -->
+            <div class="settings-section" id="profile-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="section-title">
+                        <h2>Profile Information</h2>
+                        <p>Update your personal details and public profile</p>
+                    </div>
+                </div>
+                
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="avatar-image">{{ user.username|first|upper }}</div>
+                        <div class="avatar-upload" onclick="uploadAvatar()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h3>{{ user.username }}</h3>
+                        <p>{{ user.email }}</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" value="{{ user.first_name }}" placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" value="{{ user.last_name }}" placeholder="Enter last name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" value="{{ user.username }}" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="{{ user.email }}" placeholder="Enter email">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-textarea" placeholder="Tell us about yourself">{{ user.profile.bio|default:"" }}</textarea>
+                        <span class="form-hint">Brief description for your profile. URLs are hyperlinked.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Section -->
+            <div class="settings-section" id="account-section" style="display: none;">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="section-title">
+                        <h2>Account Security</h2>
+                        <p>Manage your password and security preferences</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-input" placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" placeholder="Confirm new password">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 20px;">Security Preferences</h3>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Two-Factor Authentication</h4>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Login Notifications</h4>
+                            <p>Get notified when someone logs into your account</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                    
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Session Management</h4>
+                            <p>Automatically log out after 30 minutes of inactivity</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Section -->
+            <div class="settings-section" id="notifications-section" style="display: none;">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="section-title">
+                        <h2>Notification Preferences</h2>
+                        <p>Choose how you want to be notified</p>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Email Notifications</h4>
+                        <p>Receive updates about your account activity</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Push Notifications</h4>
+                        <p>Get real-time alerts on your device</p>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Message Notifications</h4>
+                        <p>Get notified when you receive new messages</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Task Reminders</h4>
+                        <p>Receive reminders for upcoming tasks</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+            </div>
+            
+            <!-- Integrations Section -->
+            <div class="settings-section" id="integrations-section" style="display: none;">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div class="section-title">
+                        <h2>Connected Accounts</h2>
+                        <p>Manage your connected services and integrations</p>
+                    </div>
+                </div>
+                
+                <!-- Google Calendar Integration -->
+                <div class="account-item">
+                    <div class="account-icon google">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>Google Calendar</h4>
+                        {% if user.profile.google_calendar_connected %}
+                            <p style="color: #10b981;"><i class="fas fa-check-circle"></i> Connected</p>
+                        {% else %}
+                            <p>Sync your Google Calendar events</p>
+                        {% endif %}
+                    </div>
+                    {% if user.profile.google_calendar_connected %}
+                        <a href="{% url 'google_calendar_disconnect' %}" class="btn-secondary">Disconnect</a>
+                    {% else %}
+                        <a href="{% url 'google_calendar_auth' %}" class="btn-primary">Connect</a>
+                    {% endif %}
+                </div>
+                
+                <div class="account-item">
+                    <div class="account-icon github">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>GitHub</h4>
+                        <p>Not connected</p>
+                    </div>
+                    <button class="btn-primary" onclick="connectAccount('github')">Connect</button>
+                </div>
+                
+                <div class="account-item">
+                    <div class="account-icon slack">
+                        <i class="fab fa-slack"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>Slack</h4>
+                        <p>Not connected</p>
+                    </div>
+                    <button class="btn-primary" onclick="connectAccount('slack')">Connect</button>
+                </div>
+                
+                <!-- n8n Integration -->
+                <div class="account-item">
+                    <div class="account-icon" style="background: #ff6d5a;">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>n8n Workflow Automation</h4>
+                        <p>Automate tasks and workflows</p>
+                    </div>
+                    <span class="badge" style="background: #dbeafe; color: #3b82f6; padding: 4px 12px; border-radius: 20px; font-size: 12px;">Active</span>
+                </div>
+                
+                <div class="account-item">
+                    <div class="account-icon github">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>GitHub</h4>
+                        <p>Not connected</p>
+                    </div>
+                    <button class="btn-primary" onclick="connectAccount('github')">Connect</button>
+                </div>
+                
+                <div class="account-item">
+                    <div class="account-icon slack">
+                        <i class="fab fa-slack"></i>
+                    </div>
+                    <div class="account-info">
+                        <h4>Slack</h4>
+                        <p>Not connected</p>
+                    </div>
+                    <button class="btn-primary" onclick="connectAccount('slack')">Connect</button>
+                </div>
+            </div>
+            
+            <!-- Danger Zone Section -->
+            <div class="settings-section danger-zone" id="danger-section" style="display: none;">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="section-title">
+                        <h2>Danger Zone</h2>
+                        <p>Irreversible and destructive actions</p>
+                    </div>
+                </div>
+                
+                <div class="danger-item">
+                    <div class="danger-info">
+                        <h4>Export Account Data</h4>
+                        <p>Download all your data including files, tasks, and messages</p>
+                    </div>
+                    <button class="btn-secondary" onclick="exportData()">Export Data</button>
+                </div>
+                
+                <div class="danger-item">
+                    <div class="danger-info">
+                        <h4>Delete Account</h4>
+                        <p>Permanently delete your account and all associated data</p>
+                    </div>
+                    <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showSection(sectionId, element) {
+        // Hide all sections
+        document.querySelectorAll('.settings-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId + '-section').style.display = 'block';
+        
+        // Update active nav item
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
+    
+    function toggleSwitch(element) {
+        element.classList.toggle('active');
+    }
+    
+    function uploadAvatar() {
+        alert('Avatar upload functionality');
+    }
+    
+    function saveSettings() {
+        alert('Settings saved successfully!');
+    }
+    
+    function connectAccount(service) {
+        alert(`Connecting to ${service}...`);
+    }
+    
+    function disconnectAccount(service) {
+        if (confirm(`Are you sure you want to disconnect ${service}?`)) {
+            alert(`${service} disconnected`);
+        }
+    }
+    
+    function exportData() {
+        alert('Preparing your data export...');
+    }
+    
+    function deleteAccount() {
+        if (confirm('WARNING: This action cannot be undone. Are you sure you want to delete your account?')) {
+            if (confirm('Please confirm again. All your data will be permanently lost.')) {
+                alert('Account deletion requested');
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,842 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Neural Swarm - AI Dashboard{% endblock %}
+{% block page_title %}Agent Swarm Hub{% endblock %}
+
+{% block extra_css %}
+<!-- Advanced V7 Neural UI Styles -->
+<style>
+/* ===============================================================
+   NEURAL AGENT HUB - ULTIMATE V7 DESIGN
+   =============================================================== */
+.assistants-hub-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 0 60px 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* Atmospheric Background Effect */
+.hub-atmosphere {
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: 
+        radial-gradient(circle at 15% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(236, 72, 153, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.08) 0%, transparent 30%);
+    z-index: -1;
+    pointer-events: none;
+    animation: atmospherePulse 15s infinite alternate ease-in-out;
+}
+
+@keyframes atmospherePulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.05); opacity: 1; }
+}
+
+/* Orchestrator Command Center (Top Bar) */
+.orchestrator-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        inset 0 0 20px rgba(99, 102, 241, 0.05);
+    border-radius: 28px;
+    padding: 35px 40px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.orchestrator-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.8), rgba(236, 72, 153, 0.8), transparent);
+    animation: scanline 4s linear infinite;
+}
+
+@keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.hub-title-block h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hub-title-block p {
+    color: #94a3b8;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Glowing Pulsar Indicator */
+.system-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #10b981;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pulsar {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10b981;
+    animation: pulsarAnim 2s infinite;
+}
+
+@keyframes pulsarAnim {
+    0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+}
+
+/* Swarm Button Trigger */
+.btn-swarm {
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    padding: 14px 28px;
+    border-radius: 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-swarm::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn-swarm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(236, 72, 153, 0.4);
+}
+
+.btn-swarm:hover::after {
+    left: 100%;
+}
+
+/* Agent Categories Panel */
+.agent-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 8px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.agent-filter-btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.agent-filter-btn:hover {
+    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.agent-filter-btn.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.3);
+}
+
+/* Grid Layout */
+.agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 28px;
+}
+
+/* Glassmorphic Cyber Cards */
+.cyber-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.cyber-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 
+        0 30px 60px -15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Special Featured Border effect */
+.cyber-card.featured::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 25px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(236,72,153,0.5), rgba(16,185,129,0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+}
+
+/* Top Section of Card (Icon + Title + Status) */
+.card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.agent-icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
+}
+
+.agent-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,0.3);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.agent-status-badge.online .dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
+.agent-status-badge.training .dot { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; animation: blink 1s infinite; }
+.agent-status-badge.idle .dot { background: #64748b; }
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.card-title h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 4px;
+}
+
+.card-title .role {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.agent-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+/* Agent Tech Specs (Monospace) */
+.agent-specs {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.02);
+}
+
+.spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.spec-label {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.spec-val {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    font-weight: 600;
+}
+
+/* Action Footer */
+.card-footer {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-launch {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    color: #f8fafc;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.btn-launch:hover {
+    background: #6366f1;
+    border-color: #6366f1;
+    box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+}
+
+.btn-settings {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-settings:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hub-atmosphere"></div>
+
+<div class="assistants-hub-wrapper">
+    
+    <!-- Orchestrator Control Panel -->
+    <div class="orchestrator-panel">
+        <div class="hub-title-block">
+            <h1>Neural Swarm Command</h1>
+            <p>
+                <span class="system-status"><div class="pulsar"></div> Node 00 Active</span>
+                Manage your specialized intelligence models and multi-agent workflows.
+            </p>
+        </div>
+        
+        <div class="hub-actions">
+            <button class="btn-swarm" onclick="openSwarmModal()">
+                <i class="fas fa-network-wired"></i>
+                Initialize Swarm Hub
+            </button>
+        </div>
+    </div>
+
+    <!-- Agent Fleet Filter -->
+    <div class="agent-filters">
+        <button class="agent-filter-btn active" onclick="filterAgents('all')">Network View</button>
+        <button class="agent-filter-btn" onclick="filterAgents('dev')">Engineering</button>
+        <button class="agent-filter-btn" onclick="filterAgents('exec')">Executive</button>
+        <button class="agent-filter-btn" onclick="filterAgents('creative')">Creative</button>
+        <button class="agent-filter-btn" onclick="filterAgents('edu')">Learning</button>
+        <button class="agent-filter-btn" onclick="filterAgents('career')">Career</button>
+    </div>
+
+    <!-- AI Agent Grid -->
+    <div class="agent-grid">
+
+        <!-- 1. Dev-Core Expert -->
+        <div class="cyber-card featured agent-item" data-category="dev">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.3);">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="agent-status-badge online">
+                    <div class="dot"></div> ONLINE
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Dev-Core Alpha</h3>
+                <span class="role" style="color: #34d399;">Senior Systems Architect</span>
+            </div>
+            
+            <p class="agent-desc">
+                Your primary engineering copilot. Excels at complex refactoring, algorithm design, Django/Python architecture, and React components.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">Llama-3.3-70B-Spec</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">128,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">LATENCY_P95</span>
+                    <span class="spec-val" style="color:#10b981;">140ms</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">MEMORY</span>
+                    <span class="spec-val">Persistent</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=coding" class="btn-launch">
+                    <i class="fas fa-terminal" style="font-size:0.9rem;"></i> Connect IDE
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+        <!-- 2. Omni Generalist -->
+        <div class="cyber-card featured agent-item" data-category="exec">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99,102,241,0.3);">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="agent-status-badge online">
+                    <div class="dot"></div> READY
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Omni-Director</h3>
+                <span class="role" style="color: #818cf8;">Master Generalist</span>
+            </div>
+            
+            <p class="agent-desc">
+                The flagship reasoning engine. Capable of multi-step planning, deeply analytical tasks, and routing objectives to sub-agents.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">Mixtral-8x7B-Inst</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">32,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">LATENCY_P95</span>
+                    <span class="spec-val" style="color:#10b981;">95ms</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">MODE</span>
+                    <span class="spec-val">Orchestrator</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=general" class="btn-launch">
+                    <i class="fas fa-bolt" style="font-size:0.9rem;"></i> Init Session
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+        <!-- 3. Copywriter Pro -->
+        <div class="cyber-card agent-item" data-category="creative">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(236, 72, 153, 0.1); color: #f472b6; border: 1px solid rgba(236,72,153,0.3);">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <div class="agent-status-badge training">
+                    <div class="dot"></div> TRAINING
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Lexicon Prime</h3>
+                <span class="role" style="color: #f472b6;">Chief Copywriter</span>
+            </div>
+            
+            <p class="agent-desc">
+                Currently fine-tuning on your recent writing style. Expert in SEO blogs, marketing funnels, and high-conversion landing page copy.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">Llama-3-8B-Text</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">8,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">STYLE_MATCH</span>
+                    <span class="spec-val" style="color:#f59e0b;">94% Alignment</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">VECTOR_DB</span>
+                    <span class="spec-val">Connected</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=writing" class="btn-launch">
+                    <i class="fas fa-pen-nib" style="font-size:0.9rem;"></i> Open Editor
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+        <!-- 4. Data Analyst -->
+        <div class="cyber-card agent-item" data-category="exec">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3);">
+                    <i class="fas fa-chart-network"></i>
+                </div>
+                <div class="agent-status-badge online">
+                    <div class="dot"></div> ONLINE
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Quant-Sigma</h3>
+                <span class="role" style="color: #fbbf24;">Data Scientist</span>
+            </div>
+            
+            <p class="agent-desc">
+                Handles CSV parsing, SQL query generation, trend predictions, and creating matplotlib visualizations from raw telemetry.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">Gemma-7B-it</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">8,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CODE_EXEC</span>
+                    <span class="spec-val" style="color:#10b981;">Enabled</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">PLUGINS</span>
+                    <span class="spec-val">Pandas, NumPy</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=data" class="btn-launch">
+                    <i class="fas fa-table" style="font-size:0.9rem;"></i> Drop Dataset
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+        <!-- 5. Study Assistant -->
+        <div class="cyber-card agent-item" data-category="edu">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3);">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="agent-status-badge online">
+                    <div class="dot"></div> ONLINE
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Scholarly-Nexus</h3>
+                <span class="role" style="color: #a78bfa;">Personal Research Tutor</span>
+            </div>
+            
+            <p class="agent-desc">
+                Specialized in deep knowledge retrieval, academic summarization, and concept mapping. Perfect for mastering complex new domains fast.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">Llama-3-70B</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">32,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">REASONING</span>
+                    <span class="spec-val" style="color:#8b5cf6;">Socratic</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">ACADEMIC</span>
+                    <span class="spec-val">Verified</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=study" class="btn-launch">
+                    <i class="fas fa-book-reader" style="font-size:0.9rem;"></i> Start Learning
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+        <!-- 6. Resume/Career Assistant -->
+        <div class="cyber-card agent-item" data-category="career">
+            <div class="card-header-bar">
+                <div class="agent-icon-box" style="background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249,115,22,0.3);">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="agent-status-badge online">
+                    <div class="dot"></div> ONLINE
+                </div>
+            </div>
+            
+            <div class="card-title">
+                <h3 style="color: white;">Career-Catalyst</h3>
+                <span class="role" style="color: #fb923c;">Professional Coach</span>
+            </div>
+            
+            <p class="agent-desc">
+                Expert in professional branding, ATS-optimized resumes, and high-impact cover letters. Tuned for modern tech recruitment cycles.
+            </p>
+            
+            <div class="agent-specs">
+                <div class="spec-item">
+                    <span class="spec-label">MODEL_CORE</span>
+                    <span class="spec-val">GPT-4o-Mini</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">CTX_WINDOW</span>
+                    <span class="spec-val">128,000 T</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">ATS_SCORE</span>
+                    <span class="spec-val" style="color:#10b981;">99+ Match</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">TEMPLATES</span>
+                    <span class="spec-val">Harv. / Stan.</span>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'chat' %}?assistant=resume" class="btn-launch">
+                    <i class="fas fa-rocket" style="font-size:0.9rem;"></i> Boost Career
+                </a>
+                <button class="btn-settings" title="Agent Parameters"><i class="fas fa-sliders-h"></i></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Swarm Hub Modal Extension -->
+<div id="swarmHubModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); z-index: 9999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s ease;">
+    <div style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; width: 90%; max-width: 800px; padding: 50px; text-align: center; box-shadow: 0 0 100px rgba(99, 102, 2 indigo, 0.2);">
+        <div id="swarmLoader" style="margin-bottom: 40px;">
+            <div style="width: 120px; height: 120px; margin: 0 auto; position: relative;">
+                <div style="position: absolute; inset: 0; border: 4px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 2s linear infinite;"></div>
+                <div style="position: absolute; inset: 15px; border: 4px solid #ec4899; border-bottom-color: transparent; border-radius: 50%; animation: spin 1.5s linear reverse infinite;"></div>
+                <div style="position: absolute; inset: 30px; border: 4px solid #10b981; border-left-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <i class="fas fa-network-wired" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; color: white;"></i>
+            </div>
+        </div>
+        
+        <h2 id="swarmTitle" style="font-size: 2.5rem; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;">Orchestrating Swarm Hub</h2>
+        <div id="swarmStatus" style="font-family: 'JetBrains Mono', monospace; color: #10b981; font-size: 1.1rem; margin-bottom: 30px;">
+            Initializing neural pathways...
+        </div>
+        
+        <div id="swarmLogs" style="background: rgba(0,0,0,0.4); border-radius: 16px; padding: 20px; height: 150px; overflow-y: hidden; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #64748b; margin-bottom: 30px;">
+            <div class="log-line">> [SYSTEM] Booting Kernel V7.4.2...</div>
+            <div class="log-line">> [NODE-01] Allocating tensor buffers...</div>
+        </div>
+        
+        <button onclick="closeSwarmModal()" class="btn-launch" style="width: auto; padding: 15px 40px; margin: 0 auto; display: none;" id="swarmDoneBtn">
+            Enter Command Center
+        </button>
+    </div>
+</div>
+
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.log-line { margin-bottom: 8px; opacity: 0; transform: translateX(-10px); transition: all 0.3s; }
+.log-line.active { opacity: 1; transform: translateX(0); }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter agents with simple animation
+    function filterAgents(category) {
+        // Handle Button styles
+        document.querySelectorAll('.agent-filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Handle Cards grid
+        const cards = document.querySelectorAll('.agent-item');
+        cards.forEach(card => {
+            // Reset animation
+            card.style.transition = 'none';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                    // Trigger reflow
+                    void card.offsetWidth;
+                    card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                } else {
+                    card.style.display = 'none';
+                }
+            }, 50);
+        });
+    }
+
+    // Initialize nice entrance
+    document.addEventListener("DOMContentLoaded", () => {
+        const cards = document.querySelectorAll('.cyber-card');
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, i * 100);
+        });
+    });
+
+    // Swarm Modal Logic
+    function openSwarmModal() {
+        const modal = document.getElementById('swarmHubModal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.style.opacity = '1', 50);
+        
+        const logs = [
+            "> [MEM] Fetching persistent context...",
+            "> [AI] Initializing Multi-Agent Orchestration...",
+            "> [SYNC] Connecting to Llama-3-70B backend...",
+            "> [STATUS] Optimizing prompt routing protocols...",
+            "> [SWARM] Agent nodes synchronized.",
+            "> [SYSTEM] Neural Hub is READY."
+        ];
+        
+        const logContainer = document.getElementById('swarmLogs');
+        const statusText = document.getElementById('swarmStatus');
+        const doneBtn = document.getElementById('swarmDoneBtn');
+        
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < logs.length) {
+                const line = document.createElement('div');
+                line.className = 'log-line';
+                line.textContent = logs[i];
+                logContainer.appendChild(line);
+                setTimeout(() => line.classList.add('active'), 50);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                
+                if (i === 3) statusText.textContent = "Negotiating handshake...";
+                if (i === 5) {
+                    statusText.textContent = "Connection Stable";
+                    statusText.style.color = "#8b5cf6";
+                    doneBtn.style.display = 'flex';
+                }
+                i++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 800);
+    }
+
+    function closeSwarmModal() {
+        const modal = document.getElementById('swarmHubModal');
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            // Clear logs for next time
+            document.getElementById('swarmLogs').innerHTML = '<div class="log-line">> [SYSTEM] Booting Kernel V7.4.2...</div><div class="log-line">> [NODE-01] Allocating tensor buffers...</div>';
+            document.getElementById('swarmStatus').textContent = "Initializing neural pathways...";
+            document.getElementById('swarmDoneBtn').style.display = 'none';
+        }, 500);
+    }
+</script>
+{% endblock %}

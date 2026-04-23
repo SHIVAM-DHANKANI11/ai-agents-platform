@@ -1,0 +1,357 @@
+/* ============================================
+   ENHANCED DASHBOARD WITH 3D EFFECTS
+   ============================================ */
+
+/* Import animations */
+@import url("animations.d2c7760c7694.css");
+
+/* 3D Action Cards */
+.action-card-3d {
+    position: relative;
+    padding: 32px;
+    background: linear-gradient(145deg, rgba(26, 26, 37, 0.9) 0%, rgba(18, 18, 26, 0.95) 100%);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+}
+
+.action-card-3d::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.1) 0%, 
+        rgba(139, 92, 246, 0.05) 50%,
+        rgba(6, 182, 212, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.action-card-3d:hover::before {
+    opacity: 1;
+}
+
+.action-card-3d:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(30px);
+    box-shadow: 
+        0 30px 60px -15px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(99, 102, 241, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* 3D Image Container */
+.card-image-3d {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+.card-image-3d img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    animation: float-gentle 4s ease-in-out infinite;
+}
+
+/* Glow Effect Behind Image */
+.card-image-3d::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+    filter: blur(20px);
+    z-index: -1;
+    opacity: 0.6;
+}
+
+/* Stats Cards with 3D Effect */
+.stat-card-3d {
+    padding: 28px;
+    background: linear-gradient(145deg, rgba(26, 26, 37, 0.9) 0%, rgba(18, 18, 26, 0.95) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-3d::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: left 0.6s ease;
+}
+
+.stat-card-3d:hover::before {
+    left: 100%;
+}
+
+.stat-card-3d:hover {
+    transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateZ(15px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.stat-icon-3d {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+    transform: translateZ(20px);
+}
+
+.stat-icon-3d.purple {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    color: #8b5cf6;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+}
+
+.stat-icon-3d.blue {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+    color: #3b82f6;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+}
+
+.stat-icon-3d.green {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+    color: #10b981;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+}
+
+.stat-icon-3d.orange {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+    color: #f59e0b;
+    box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+}
+
+/* Gradient Border Cards */
+.gradient-border-card {
+    position: relative;
+    background: var(--bg-secondary);
+    border-radius: 24px;
+    padding: 2px;
+    overflow: hidden;
+}
+
+.gradient-border-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+    border-radius: 24px;
+}
+
+.gradient-border-card-inner {
+    background: var(--bg-secondary);
+    border-radius: 22px;
+    padding: 28px;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+/* Neon Button Effect */
+.btn-neon {
+    position: relative;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+.btn-neon::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    filter: blur(10px);
+}
+
+.btn-neon:hover::before {
+    opacity: 1;
+}
+
+.btn-neon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+}
+
+/* Floating Elements */
+.floating-element {
+    animation: float-gentle 5s ease-in-out infinite;
+}
+
+.floating-element-delayed {
+    animation: float-gentle 5s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+/* Glass Cards with Enhanced Effect */
+.glass-card-enhanced {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.08) 0%, 
+        rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Welcome Section Enhancement */
+.welcome-section-enhanced {
+    position: relative;
+    padding: 40px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.1) 0%, 
+        rgba(139, 92, 246, 0.05) 50%,
+        rgba(6, 182, 212, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.welcome-section-enhanced::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    animation: float-gentle 8s ease-in-out infinite;
+}
+
+/* 3D Illustration Placeholders */
+.illustration-3d {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.illustration-3d::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.3) 0%, 
+        rgba(139, 92, 246, 0.2) 100%);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morph 8s ease-in-out infinite;
+    filter: blur(20px);
+}
+
+.illustration-3d i {
+    font-size: 48px;
+    color: white;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+/* Chat Card Special Effect */
+.chat-card-3d {
+    background: linear-gradient(145deg, 
+        rgba(99, 102, 241, 0.15) 0%, 
+        rgba(26, 26, 37, 0.9) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.chat-card-3d:hover {
+    box-shadow: 
+        0 30px 60px -15px rgba(99, 102, 241, 0.3),
+        0 0 50px rgba(99, 102, 241, 0.2);
+}
+
+/* Task Card Effect */
+.task-card-3d {
+    background: linear-gradient(145deg, 
+        rgba(16, 185, 129, 0.15) 0%, 
+        rgba(26, 26, 37, 0.9) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.task-card-3d:hover {
+    box-shadow: 
+        0 30px 60px -15px rgba(16, 185, 129, 0.3),
+        0 0 50px rgba(16, 185, 129, 0.2);
+}
+
+/* Calendar Card Effect */
+.calendar-card-3d {
+    background: linear-gradient(145deg, 
+        rgba(245, 158, 11, 0.15) 0%, 
+        rgba(26, 26, 37, 0.9) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.calendar-card-3d:hover {
+    box-shadow: 
+        0 30px 60px -15px rgba(245, 158, 11, 0.3),
+        0 0 50px rgba(245, 158, 11, 0.2);
+}
+
+/* File Card Effect */
+.file-card-3d {
+    background: linear-gradient(145deg, 
+        rgba(236, 72, 153, 0.15) 0%, 
+        rgba(26, 26, 37, 0.9) 100%);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.file-card-3d:hover {
+    box-shadow: 
+        0 30px 60px -15px rgba(236, 72, 153, 0.3),
+        0 0 50px rgba(236, 72, 153, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .action-card-3d:hover {
+        transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateZ(15px);
+    }
+    
+    .stat-card-3d:hover {
+        transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateZ(10px);
+    }
+    
+    .card-image-3d {
+        width: 60px;
+        height: 60px;
+    }
+}

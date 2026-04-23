@@ -1,0 +1,958 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static custom_filters %}
+
+{% block title %}Chat - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<!-- Voice Assistant CSS -->
+<link rel="stylesheet" href="{% static 'css/voice-assistant.css' %}">
+
+<style>
+    /* Chat Layout */
+    .chat-layout {
+        display: flex;
+        height: calc(100vh - 64px);
+        margin: -32px -40px;
+    }
+    
+    /* Chat Sidebar - Session List */
+    .chat-sidebar {
+        width: 260px;
+        background: #ffffff;
+        border-right: 1px solid #e5e5e5;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-sidebar-header {
+        padding: 16px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    
+    .new-chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        background: #1a1a1a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    
+    .new-chat-btn:hover {
+        background: #333;
+    }
+    
+    .chat-sessions {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px;
+    }
+    
+    .session-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 4px;
+    }
+    
+    .session-item:hover {
+        background: #f3f4f6;
+    }
+    
+    .session-item.active {
+        background: #f3f4f6;
+    }
+    
+    .session-icon {
+        width: 32px;
+        height: 32px;
+        background: #e5e7eb;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        font-size: 14px;
+    }
+    
+    .session-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .session-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .session-time {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+    
+    /* Main Chat Area */
+    .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+    }
+    
+    /* Chat Header */
+    .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    
+    .chat-header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .chat-header-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+    }
+    
+    .chat-header-text h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+    
+    .chat-header-text p {
+        font-size: 13px;
+        color: #9ca3af;
+    }
+    
+    .chat-header-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .header-action-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e5e5e5;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .header-action-btn:hover {
+        background: #f3f4f6;
+        color: #1a1a1a;
+    }
+    
+    /* Messages Container */
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+    }
+    
+    .welcome-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+    }
+    
+    .welcome-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 36px;
+        margin-bottom: 24px;
+    }
+    
+    .welcome-screen h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+    }
+    
+    .welcome-screen p {
+        font-size: 16px;
+        color: #6b7280;
+        max-width: 400px;
+        line-height: 1.6;
+    }
+    
+    .suggested-prompts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 32px;
+        max-width: 600px;
+    }
+    
+    .prompt-btn {
+        padding: 16px 20px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .prompt-btn:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+    }
+    
+    .prompt-btn h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+    }
+    
+    .prompt-btn p {
+        font-size: 13px;
+        color: #9ca3af;
+    }
+    
+    /* Message Bubbles */
+    .message {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        max-width: 800px;
+    }
+    
+    .message.user {
+        margin-left: auto;
+        flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+    
+    .message.user .message-avatar {
+        background: #1a1a1a;
+        color: white;
+    }
+    
+    .message.assistant .message-avatar {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+    }
+    
+    .message-content {
+        background: #f3f4f6;
+        padding: 16px 20px;
+        border-radius: 16px;
+        border-bottom-left-radius: 4px;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #1a1a1a;
+    }
+    
+    .message.user .message-content {
+        background: #1a1a1a;
+        color: white;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .message-content p {
+        margin-bottom: 12px;
+    }
+    
+    .message-content p:last-child {
+        margin-bottom: 0;
+    }
+    
+    .message-content code {
+        background: rgba(0, 0, 0, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 13px;
+    }
+    
+    .message.user .message-content code {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .message-content pre {
+        background: #1a1a1a;
+        color: #e5e7eb;
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 12px 0;
+    }
+    
+    .message-content pre code {
+        background: transparent;
+        padding: 0;
+    }
+    
+    /* Message Actions */
+    .message-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    
+    .message:hover .message-actions {
+        opacity: 1;
+    }
+    
+    .message-action {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .message-action:hover {
+        background: #f3f4f6;
+        color: #1a1a1a;
+    }
+    
+    /* Chat Input */
+    .chat-input-container {
+        padding: 24px;
+        border-top: 1px solid #e5e5e5;
+    }
+    
+    .chat-input-wrapper {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 12px 16px;
+        transition: all 0.2s ease;
+    }
+    
+    .chat-input-wrapper:focus-within {
+        background: white;
+        border-color: #d1d5db;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .chat-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 15px;
+        line-height: 1.5;
+        resize: none;
+        max-height: 120px;
+        min-height: 24px;
+        outline: none;
+        font-family: inherit;
+    }
+    
+    .chat-input::placeholder {
+        color: #9ca3af;
+    }
+    
+    .chat-input-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .input-action-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .input-action-btn:hover {
+        background: #e5e7eb;
+        color: #6b7280;
+    }
+    
+    .input-action-btn.recording {
+        background: #ef4444;
+        color: white;
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .send-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #1a1a1a;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .send-btn:hover {
+        background: #333;
+    }
+    
+    .send-btn:disabled {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+    
+    /* Typing Indicator */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 16px 20px;
+    }
+    
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background: #9ca3af;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out both;
+    }
+    
+    .typing-indicator span:nth-child(1) {
+        animation-delay: -0.32s;
+    }
+    
+    .typing-indicator span:nth-child(2) {
+        animation-delay: -0.16s;
+    }
+    
+    @keyframes typing {
+        0%, 80%, 100% {
+            transform: scale(0);
+        }
+        40% {
+            transform: scale(1);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .chat-sidebar {
+            display: none;
+        }
+        
+        .chat-layout {
+            margin: -20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- Chat Sidebar -->
+    <aside class="chat-sidebar">
+        <div class="chat-sidebar-header">
+            <button class="new-chat-btn" onclick="createNewChat()">
+                <i class="fas fa-plus"></i>
+                <span>New Chat</span>
+            </button>
+        </div>
+        
+        <div class="chat-sessions" id="chatSessions">
+            {% if chat_sessions %}
+                {% for session in chat_sessions %}
+                <div class="session-item {% if current_session and current_session.id == session.id %}active{% endif %}" 
+                     onclick="loadSession({{ session.id }})" data-session-id="{{ session.id }}">
+                    <div class="session-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="session-info">
+                        <div class="session-title">{{ session.title|default:"New Chat" }}</div>
+                        <div class="session-time">{{ session.updated_at|timesince }} ago</div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="padding: 24px; text-align: center; color: #9ca3af;">
+                    <i class="fas fa-comments" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                    <p style="font-size: 14px;">No chats yet</p>
+                    <p style="font-size: 12px; margin-top: 4px;">Start a new conversation!</p>
+                </div>
+            {% endif %}
+        </div>
+    </aside>
+    
+    <!-- Main Chat Area -->
+    <main class="chat-main">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-header-title">
+                {% with a_type=current_session.assistant_type|default:"general" %}
+                {% with assistant=assistants|get_item:a_type %}
+                <div class="chat-header-icon" style="background: {{ assistant.color|default:'linear-gradient(135deg, #6366f1, #8b5cf6)' }}">
+                    <i class="fas {{ assistant.icon|default:'fa-robot' }}"></i>
+                </div>
+                <div class="chat-header-text">
+                    <h3>{{ assistant.name|default:"AI Assistant" }}</h3>
+                    <p>{{ assistant.description|default:"Powered by Groq" }}</p>
+                </div>
+                {% endwith %}
+                {% endwith %}
+            </div>
+            <div class="chat-header-actions">
+                <button class="header-action-btn" title="Clear chat" onclick="clearChat()">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="header-action-btn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            {% if messages %}
+                {% for msg in messages %}
+                <div class="message {% if msg.role == 'user' %}user{% else %}assistant{% endif %}">
+                    <div class="message-avatar">
+                        {% if msg.role == 'user' %}
+                            <i class="fas fa-user"></i>
+                        {% else %}
+                            <i class="fas fa-robot"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="message-content">
+                            {{ msg.content|linebreaksbr }}
+                        </div>
+                        {% if msg.role == 'assistant' %}
+                        <div class="message-actions">
+                            <button class="message-action" title="Copy" onclick="copyMessage(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="message-action" title="Regenerate" onclick="regenerateMessage()">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Welcome Screen -->
+                <div class="welcome-screen">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>How can I help you today?</h2>
+                    <p>I'm your AI assistant powered by Groq. Ask me anything - from coding help to creative writing, I'm here to assist!</p>
+                    
+                    <div class="suggested-prompts">
+                        <button class="prompt-btn" onclick="sendPrompt('Explain quantum computing in simple terms')">
+                            <h4>Explain quantum computing</h4>
+                            <p>in simple terms</p>
+                        </button>
+                        <button class="prompt-btn" onclick="sendPrompt('Help me write a Python function to sort a list')">
+                            <h4>Help me write code</h4>
+                            <p>Python function example</p>
+                        </button>
+                        <button class="prompt-btn" onclick="sendPrompt('Give me ideas for a weekend project')">
+                            <h4>Weekend project ideas</h4>
+                            <p>creative suggestions</p>
+                        </button>
+                        <button class="prompt-btn" onclick="sendPrompt('Summarize the key principles of design thinking')">
+                            <h4>Design thinking</h4>
+                            <p>key principles</p>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Type your message..."
+                    rows="1"
+                    onkeydown="handleKeyDown(event)"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <div class="chat-input-actions">
+                    <button class="input-action-btn" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-action-btn" id="voiceBtn" title="Voice input" onclick="toggleVoiceInput()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentSessionId = {% if current_session %}{{ current_session.id }}{% else %}null{% endif %};
+    let isTyping = false;
+    
+    // Auto-resize textarea
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        
+        // Enable/disable send button
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = textarea.value.trim() === '';
+    }
+    
+    // Handle Enter key
+    function handleKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+    
+    // Send message
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        
+        if (!message || isTyping) return;
+        
+        // Clear welcome screen if present
+        const welcomeScreen = document.querySelector('.welcome-screen');
+        if (welcomeScreen) {
+            welcomeScreen.remove();
+        }
+        
+        // Add user message to UI
+        addMessageToUI('user', message);
+        
+        // Clear input
+        input.value = '';
+        input.style.height = 'auto';
+        document.getElementById('sendBtn').disabled = true;
+        
+        // Show typing indicator
+        showTypingIndicator();
+        isTyping = true;
+        
+        try {
+            const response = await fetch('/api/chat/send/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: currentSessionId
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Remove typing indicator
+            removeTypingIndicator();
+            
+            if (data.success) {
+                // Update session ID if new
+                if (data.session_id && !currentSessionId) {
+                    currentSessionId = data.session_id;
+                    refreshSessionList();
+                }
+                
+                // Add assistant response
+                addMessageToUI('assistant', data.response);
+            } else {
+                addMessageToUI('assistant', 'Sorry, I encountered an error. Please try again.');
+            }
+        } catch (error) {
+            removeTypingIndicator();
+            addMessageToUI('assistant', 'Sorry, I encountered an error. Please try again.');
+        }
+        
+        isTyping = false;
+    }
+    
+    // Send prompt from suggested prompts
+    function sendPrompt(prompt) {
+        document.getElementById('chatInput').value = prompt;
+        autoResize(document.getElementById('chatInput'));
+        sendMessage();
+    }
+    
+    // Add message to UI
+    function addMessageToUI(role, content) {
+        const messagesContainer = document.getElementById('chatMessages');
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+        
+        const avatarIcon = role === 'user' ? 'fa-user' : 'fa-robot';
+        const actionsHtml = role === 'assistant' ? `
+            <div class="message-actions">
+                <button class="message-action" title="Copy" onclick="copyMessage(this)">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <button class="message-action" title="Regenerate" onclick="regenerateMessage()">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        ` : '';
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas ${avatarIcon}"></i>
+            </div>
+            <div>
+                <div class="message-content">${escapeHtml(content).replace(/\n/g, '<br>')}</div>
+                ${actionsHtml}
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTypingIndicator() {
+        const messagesContainer = document.getElementById('chatMessages');
+        
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message assistant';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Remove typing indicator
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    // Copy message
+    function copyMessage(button) {
+        const content = button.closest('.message').querySelector('.message-content').innerText;
+        navigator.clipboard.writeText(content).then(() => {
+            const icon = button.querySelector('i');
+            icon.className = 'fas fa-check';
+            setTimeout(() => {
+                icon.className = 'fas fa-copy';
+            }, 2000);
+        });
+    }
+    
+    // Regenerate message
+    function regenerateMessage() {
+        // TODO: Implement regenerate
+        console.log('Regenerate clicked');
+    }
+    
+    // Create new chat
+    function createNewChat() {
+        currentSessionId = null;
+        window.location.href = '/chat/';
+    }
+    
+    // Load session
+    function loadSession(sessionId) {
+        window.location.href = '/chat/?session=' + sessionId;
+    }
+    
+    // Refresh session list
+    function refreshSessionList() {
+        // TODO: Refresh sidebar with new session
+    }
+    
+    // Clear chat
+    function clearChat() {
+        if (confirm('Are you sure you want to clear this chat?')) {
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="welcome-screen">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>How can I help you today?</h2>
+                    <p>I'm your AI assistant powered by Groq. Ask me anything!</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Voice Input
+    let recognition = null;
+    let isRecording = false;
+    
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        
+        recognition.onstart = function() {
+            isRecording = true;
+            document.getElementById('voiceBtn').classList.add('recording');
+            document.getElementById('chatInput').placeholder = 'Listening...';
+        };
+        
+        recognition.onend = function() {
+            isRecording = false;
+            document.getElementById('voiceBtn').classList.remove('recording');
+            document.getElementById('chatInput').placeholder = 'Type your message...';
+        };
+        
+        recognition.onresult = function(event) {
+            let finalTranscript = '';
+            let interimTranscript = '';
+            
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+            
+            const chatInput = document.getElementById('chatInput');
+            if (finalTranscript) {
+                chatInput.value = finalTranscript;
+                autoResize(chatInput);
+                updateSendButton();
+            } else if (interimTranscript) {
+                chatInput.value = interimTranscript;
+                autoResize(chatInput);
+                updateSendButton();
+            }
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            showToast('Voice Input Error', 'Could not access microphone. Please check permissions.', 'error');
+            isRecording = false;
+            document.getElementById('voiceBtn').classList.remove('recording');
+        };
+    }
+    
+    function toggleVoiceInput() {
+        // Use the new voice assistant
+        if (window.voiceAssistant) {
+            window.voiceAssistant.toggleRecording();
+        } else {
+            showToast('Voice Input', 'Voice assistant is loading...', 'warning');
+        }
+    }
+    
+    function updateSendButton() {
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = chatInput.value.trim().length === 0;
+    }
+</script>
+
+<!-- Voice Assistant JS -->
+<script src="{% static 'js/voice-assistant.js' %}"></script>
+{% endblock %}

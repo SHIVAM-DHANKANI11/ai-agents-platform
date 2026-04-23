@@ -1,0 +1,384 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Files - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/files.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="files-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <h1>Files</h1>
+            <p>Manage and organize your files</p>
+        </div>
+        <div class="header-actions">
+            <div class="storage-info">
+                <div class="storage-bar">
+                    <div class="storage-used" style="width: 45%"></div>
+                </div>
+                <span class="storage-text">450 MB / 1 GB</span>
+            </div>
+            <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Upload</span>
+            </button>
+            <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFiles(this.files)">
+        </div>
+    </div>
+    
+    <!-- Upload Area -->
+    <div class="upload-card" id="uploadArea">
+        <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <h3>Drag & drop files here</h3>
+        <p>or click to browse from your computer</p>
+        <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-folder-open"></i>
+            <span>Choose Files</span>
+        </button>
+    </div>
+    
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterFiles('all', this)">All Files</button>
+        <button class="filter-tab" onclick="filterFiles('images', this)">Images</button>
+        <button class="filter-tab" onclick="filterFiles('documents', this)">Documents</button>
+        <button class="filter-tab" onclick="filterFiles('videos', this)">Videos</button>
+        <button class="filter-tab" onclick="filterFiles('others', this)">Others</button>
+    </div>
+    
+    <!-- Files Grid -->
+    <div class="files-grid" id="filesGrid">
+        <!-- PDF File -->
+        <div class="file-card" data-type="documents">
+            <div class="file-preview">
+                <div class="file-icon pdf">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('project-report.pdf')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('project-report.pdf')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Project_Report.pdf</div>
+                <div class="file-meta">
+                    <span class="file-size">2.5 MB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 20, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Word Document -->
+        <div class="file-card" data-type="documents">
+            <div class="file-preview">
+                <div class="file-icon doc">
+                    <i class="fas fa-file-word"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('meeting-notes.docx')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('meeting-notes.docx')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Meeting_Notes.docx</div>
+                <div class="file-meta">
+                    <span class="file-size">156 KB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 18, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Image -->
+        <div class="file-card" data-type="images">
+            <div class="file-preview">
+                <div class="file-icon image">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('dashboard-mockup.png')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('dashboard-mockup.png')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Dashboard_Mockup.png</div>
+                <div class="file-meta">
+                    <span class="file-size">1.2 MB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 15, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Code File -->
+        <div class="file-card" data-type="others">
+            <div class="file-preview">
+                <div class="file-icon code">
+                    <i class="fas fa-file-code"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('main.py')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('main.py')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">main.py</div>
+                <div class="file-meta">
+                    <span class="file-size">12 KB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 12, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spreadsheet -->
+        <div class="file-card" data-type="documents">
+            <div class="file-preview">
+                <div class="file-icon spreadsheet">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('budget-2026.xlsx')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('budget-2026.xlsx')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Budget_2026.xlsx</div>
+                <div class="file-meta">
+                    <span class="file-size">45 KB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 10, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Video -->
+        <div class="file-card" data-type="videos">
+            <div class="file-preview">
+                <div class="file-icon video">
+                    <i class="fas fa-file-video"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('demo-video.mp4')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('demo-video.mp4')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Demo_Video.mp4</div>
+                <div class="file-meta">
+                    <span class="file-size">24.5 MB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 8, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Audio -->
+        <div class="file-card" data-type="others">
+            <div class="file-preview">
+                <div class="file-icon audio">
+                    <i class="fas fa-file-audio"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('recording.mp3')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('recording.mp3')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Recording.mp3</div>
+                <div class="file-meta">
+                    <span class="file-size">3.8 MB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 5, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Archive -->
+        <div class="file-card" data-type="others">
+            <div class="file-preview">
+                <div class="file-icon archive">
+                    <i class="fas fa-file-archive"></i>
+                </div>
+                <div class="file-actions-overlay">
+                    <button class="file-btn" title="Download" onclick="downloadFile('backup.zip')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="file-btn delete" title="Delete" onclick="deleteFile('backup.zip')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="file-info">
+                <div class="file-name">Backup.zip</div>
+                <div class="file-meta">
+                    <span class="file-size">156 MB</span>
+                    <span class="file-date">
+                        <i class="fas fa-clock"></i>
+                        Mar 1, 2026
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Drag and Drop
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+    
+    async function handleFiles(files) {
+        if (files.length === 0) return;
+        
+        const generateSummary = confirm('Generate AI summary and create task from file content?');
+        
+        for (const file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('generate_summary', generateSummary);
+            formData.append('csrfmiddlewaretoken', getCSRFToken());
+            
+            try {
+                const response = await fetch('/api/files/upload/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let message = `Uploaded: ${data.file_name}`;
+                    if (data.task_created) {
+                        message += '\n\nAI Summary generated and task created!';
+                    }
+                    alert(message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Upload failed'));
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed. Check console for details.');
+            }
+        }
+    }
+    
+    function getCSRFToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function filterFiles(type, element) {
+        // Update active tab
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        element.classList.add('active');
+        
+        // Filter files
+        const files = document.querySelectorAll('.file-card');
+        files.forEach(file => {
+            if (type === 'all') {
+                file.style.display = 'block';
+            } else {
+                const fileType = file.dataset.type;
+                file.style.display = fileType === type ? 'block' : 'none';
+            }
+        });
+    }
+    
+    function downloadFile(filename) {
+        alert(`Downloading ${filename}...`);
+        // In real implementation, trigger file download
+    }
+    
+    function deleteFile(filename) {
+        if (!confirm(`Are you sure you want to delete ${filename}?`)) {
+            return;
+        }
+        alert(`Deleted ${filename}`);
+        // In real implementation, delete file from server
+    }
+</script>
+{% endblock %}

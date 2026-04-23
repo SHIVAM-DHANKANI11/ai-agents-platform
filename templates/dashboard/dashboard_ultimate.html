@@ -1,0 +1,538 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Ultimate Dashboard - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/focus-timer.css' %}">
+<link rel="stylesheet" href="{% static 'css/habit-tracker.css' %}">
+<link rel="stylesheet" href="{% static 'css/productivity-score.css' %}">
+<link rel="stylesheet" href="{% static 'css/ai-planner.css' %}">
+<link rel="stylesheet" href="{% static 'css/mood-tracker.css' %}">
+<link rel="stylesheet" href="{% static 'css/quick-actions.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="welcome-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+        <h1>Good morning, {{ user.username|default:"User" }}! ☀️</h1>
+        <p>Let's make today productive!</p>
+    </div>
+    
+    <!-- Streak Widget -->
+    <div class="streak-widget" style="display: flex; gap: 16px; align-items: center;">
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🔥 {{ streak_info.current_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Day Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">🏆 {{ streak_info.longest_streak }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Best Streak</div>
+        </div>
+        <div class="streak-item" style="text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 12px; color: white;">
+            <div style="font-size: 24px; font-weight: 700;">✓ {{ streak_info.total_completed }}</div>
+            <div style="font-size: 11px; opacity: 0.9;">Tasks Done</div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Daily Planner Widget -->
+<div class="ai-planner-widget">
+    <div class="planner-header">
+        <div class="planner-title">
+            🤖 AI Daily Planner
+            <span class="planner-ai-badge">AI POWERED</span>
+        </div>
+        <button class="planner-generate-btn" onclick="generateDailyPlan()">
+            <i class="fas fa-magic"></i>
+            Generate Plan
+        </button>
+    </div>
+    
+    <div class="planner-suggestions" id="plannerSuggestions">
+        <div class="planner-empty-state">
+            <div class="planner-empty-icon">📋</div>
+            <div class="planner-empty-title">No plan yet</div>
+            <div class="planner-empty-desc">Click "Generate Plan" to get AI-powered suggestions for your day</div>
+        </div>
+    </div>
+</div>
+
+<!-- Mood & Energy Tracker -->
+<div class="mood-tracker-widget">
+    <div class="mood-tracker-header">
+        <div class="mood-tracker-title">😊 How are you feeling?</div>
+        <div class="mood-tracker-subtitle">Track your mood and energy levels</div>
+    </div>
+    
+    <div class="mood-selector">
+        <div class="mood-option" data-mood="excellent" onclick="selectMood('excellent')">
+            <span class="mood-emoji">🤩</span>
+            <span class="mood-label">Excellent</span>
+        </div>
+        <div class="mood-option" data-mood="good" onclick="selectMood('good')">
+            <span class="mood-emoji">🙂</span>
+            <span class="mood-label">Good</span>
+        </div>
+        <div class="mood-option" data-mood="neutral" onclick="selectMood('neutral')">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-label">Okay</span>
+        </div>
+        <div class="mood-option" data-mood="tired" onclick="selectMood('tired')">
+            <span class="mood-emoji">😴</span>
+            <span class="mood-label">Tired</span>
+        </div>
+        <div class="mood-option" data-mood="stressed" onclick="selectMood('stressed')">
+            <span class="mood-emoji">😫</span>
+            <span class="mood-label">Stressed</span>
+        </div>
+    </div>
+    
+    <div class="energy-section">
+        <div class="energy-title">
+            ⚡ Energy Level
+        </div>
+        <div class="energy-slider-container">
+            <input type="range" min="1" max="10" value="5" class="energy-slider" id="energySlider" oninput="updateEnergyValue(this.value)">
+            <div class="energy-labels">
+                <span>Low</span>
+                <span id="energyValue">5/10</span>
+                <span>High</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mood-note-section">
+        <label class="mood-note-label">How are you feeling? (optional)</label>
+        <textarea class="mood-note-input" id="moodNote" placeholder="Share what's on your mind..."></textarea>
+    </div>
+    
+    <button class="mood-submit-btn" onclick="submitMood()">
+        Save Check-in
+    </button>
+    
+    <div class="mood-history" id="moodHistory">
+        <div class="mood-history-title">Recent Check-ins</div>
+        <div class="mood-timeline" id="moodTimeline">
+            <!-- Mood history will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Productivity Score Widget -->
+<div class="productivity-widget">
+    <div class="productivity-header">
+        <div class="productivity-title">🎯 Your Productivity Score</div>
+        <div class="level-badge">
+            <span class="level-icon">⭐</span>
+            <span id="userLevel">Beginner</span>
+        </div>
+    </div>
+    
+    <div class="productivity-score-container">
+        <svg width="180" height="180" class="productivity-score-circle">
+            <defs>
+                <linearGradient id="gradientScore" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4f46e5" />
+                    <stop offset="100%" stop-color="#7c3aed" />
+                </linearGradient>
+            </defs>
+            <circle class="productivity-score-bg" cx="90" cy="90" r="70"></circle>
+            <circle class="productivity-score-bar" id="scoreBar" cx="90" cy="90" r="70"></circle>
+        </svg>
+        <div class="productivity-score-text">
+            <div class="score-number" id="scoreValue">0</div>
+            <div class="score-label">Productivity Score</div>
+        </div>
+    </div>
+    
+    <div class="level-progress">
+        <div class="level-progress-label">
+            <span>Progress to next level</span>
+            <span id="levelProgress">0%</span>
+        </div>
+        <div class="level-progress-bar">
+            <div class="level-progress-fill" id="levelFill" style="width: 0%;"></div>
+        </div>
+    </div>
+    
+    <div class="productivity-insights">
+        <div class="insight-card">
+            <div class="insight-icon purple">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="insight-value" id="tasksCompleted">0</div>
+            <div class="insight-label">Tasks Today</div>
+        </div>
+        <div class="insight-card">
+            <div class="insight-icon green">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div class="insight-value" id="habitsDone">0</div>
+            <div class="insight-label">Habits Done</div>
+        </div>
+        <div class="insight-card">
+            <div class="insight-icon blue">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="insight-value" id="focusMinutes">0m</div>
+            <div class="insight-label">Focus Time</div>
+        </div>
+        <div class="insight-card">
+            <div class="insight-icon orange">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="insight-value" id="eventsToday">0</div>
+            <div class="insight-label">Events Today</div>
+        </div>
+    </div>
+</div>
+
+<!-- Habit Tracker Widget -->
+<div class="habit-tracker-widget">
+    <div class="habit-tracker-header">
+        <div class="habit-tracker-title">
+            <i class="fas fa-sync-alt"></i>
+            Daily Habits
+        </div>
+        <button class="habit-add-btn" onclick="openHabitModal()">
+            <i class="fas fa-plus"></i> Add Habit
+        </button>
+    </div>
+    
+    <div class="habit-list" id="habitList">
+        <!-- Habits will be loaded here -->
+    </div>
+</div>
+
+<!-- Focus Timer Widget -->
+<div class="focus-timer-widget">
+    <div class="timer-header">
+        <div class="timer-title">🎯 Focus Timer</div>
+        <div class="timer-presets">
+            <button class="timer-preset-btn active" onclick="setTimerDuration(25)">25m</button>
+            <button class="timer-preset-btn" onclick="setTimerDuration(45)">45m</button>
+            <button class="timer-preset-btn" onclick="setTimerDuration(60)">60m</button>
+        </div>
+    </div>
+    
+    <div class="timer-display">
+        <div class="timer-time" id="timerDisplay">25:00</div>
+        <div class="timer-label" id="timerLabel">Focus Session</div>
+        <div class="timer-progress">
+            <div class="timer-progress-bar" id="timerProgress" style="width: 0%;"></div>
+        </div>
+    </div>
+    
+    <div class="timer-controls">
+        <button class="timer-btn timer-btn-primary" id="startPauseBtn" onclick="toggleTimer()">
+            <i class="fas fa-play"></i>
+            <span>Start Focus</span>
+        </button>
+        <button class="timer-btn timer-btn-secondary" onclick="resetTimer()">
+            <i class="fas fa-redo"></i>
+            <span>Reset</span>
+        </button>
+    </div>
+    
+    <div class="timer-stats">
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="sessionsToday">0</div>
+            <div class="timer-stat-label">Sessions Today</div>
+        </div>
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="totalFocusTime">0m</div>
+            <div class="timer-stat-label">Focus Time</div>
+        </div>
+        <div class="timer-stat">
+            <div class="timer-stat-value" id="currentStreak">{{ streak_info.current_streak }}</div>
+            <div class="timer-stat-label">Day Streak</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions FAB -->
+<div class="fab-container">
+    <button class="fab-button" onclick="toggleQuickActions()" title="Quick Actions">
+        <i class="fas fa-bolt"></i>
+    </button>
+</div>
+
+<!-- Quick Actions Panel -->
+<div class="quick-actions-panel" id="quickActionsPanel">
+    <div class="quick-actions-header">
+        <div class="quick-actions-title">⚡ Quick Actions</div>
+        <button class="quick-actions-close" onclick="toggleQuickActions()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'tasks' %}'">
+        <div class="quick-action-icon purple">
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Create Task</div>
+            <div class="quick-action-desc">Add a new task instantly</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'chat' %}'">
+        <div class="quick-action-icon green">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Ask AI</div>
+            <div class="quick-action-desc">Chat with AI assistant</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'calendar' %}'">
+        <div class="quick-action-icon blue">
+            <i class="fas fa-calendar-plus"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Schedule Event</div>
+            <div class="quick-action-desc">Add calendar event</div>
+        </div>
+    </div>
+    
+    <div class="quick-action-item" onclick="window.location.href='{% url 'files' %}'">
+        <div class="quick-action-icon orange">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="quick-action-content">
+            <div class="quick-action-label">Upload File</div>
+            <div class="quick-action-desc">Upload document for AI summary</div>
+        </div>
+    </div>
+</div>
+
+<!-- Habit Modal -->
+<div class="habit-modal-overlay" id="habitModalOverlay">
+    <div class="habit-modal">
+        <div class="habit-modal-title">Create New Habit</div>
+        
+        <div class="habit-form-group">
+            <label class="habit-form-label">Habit Name</label>
+            <input type="text" class="habit-form-input" id="habitName" placeholder="e.g., Morning meditation">
+        </div>
+        
+        <div class="habit-form-group">
+            <label class="habit-form-label">Frequency</label>
+            <div class="habit-frequency-selector">
+                <div class="habit-frequency-option selected" onclick="selectFrequency('daily')">Daily</div>
+                <div class="habit-frequency-option" onclick="selectFrequency('weekly')">Weekly</div>
+                <div class="habit-frequency-option" onclick="selectFrequency('custom')">Custom</div>
+            </div>
+        </div>
+        
+        <div class="habit-modal-actions">
+            <button class="habit-btn habit-btn-secondary" onclick="closeHabitModal()">Cancel</button>
+            <button class="habit-btn habit-btn-primary" onclick="createHabit()">Create Habit</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ==================== DASHBOARD FEATURES ====================
+
+// ==================== MOOD TRACKER ====================
+let currentMood = null;
+let moodHistory = [];
+
+// Load mood history
+function loadMoodHistory() {
+    const saved = localStorage.getItem('moodHistory');
+    if (saved) {
+        moodHistory = JSON.parse(saved);
+        renderMoodHistory();
+    }
+}
+
+// Select mood
+function selectMood(mood) {
+    currentMood = mood;
+    
+    // Update UI
+    document.querySelectorAll('.mood-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    
+    document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+}
+
+// Update energy value display
+function updateEnergyValue(value) {
+    document.getElementById('energyValue').textContent = `${value}/10`;
+}
+
+// Submit mood check-in
+function submitMood() {
+    if (!currentMood) {
+        showError('Please select how you\'re feeling', 'Error');
+        return;
+    }
+    
+    const energy = parseInt(document.getElementById('energySlider').value);
+    const note = document.getElementById('moodNote').value.trim();
+    
+    const checkIn = {
+        id: Date.now(),
+        mood: currentMood,
+        energy: energy,
+        note: note,
+        timestamp: new Date().toISOString()
+    };
+    
+    moodHistory.unshift(checkIn);
+    localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+    
+    renderMoodHistory();
+    showSuccess('Mood check-in saved!', 'Great job');
+    
+    // Reset form
+    currentMood = null;
+    document.querySelectorAll('.mood-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    document.getElementById('energySlider').value = 5;
+    document.getElementById('moodNote').value = '';
+    updateEnergyValue(5);
+}
+
+// Render mood history
+function renderMoodHistory() {
+    const timeline = document.getElementById('moodTimeline');
+    
+    if (moodHistory.length === 0) {
+        timeline.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #6b7280;">
+                <p>No check-ins yet. Track your first mood!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const recentMoods = moodHistory.slice(0, 7); // Show last 7
+    
+    timeline.innerHTML = recentMoods.map(item => {
+        const moodEmojis = {
+            'excellent': '🤩',
+            'good': '🙂',
+            'neutral': '😐',
+            'tired': '😴',
+            'stressed': '😫'
+        };
+        
+        const date = new Date(item.timestamp);
+        const dateStr = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        let borderClass = 'neutral';
+        if (['excellent', 'good'].includes(item.mood)) borderClass = 'good';
+        if (['tired', 'stressed'].includes(item.mood)) borderClass = 'bad';
+        
+        return `
+            <div class="mood-timeline-item ${borderClass}">
+                <div class="timeline-mood">${moodEmojis[item.mood]}</div>
+                <div class="timeline-info">
+                    <div class="timeline-date">${dateStr}</div>
+                    <div class="timeline-mood-text">${item.mood.charAt(0).toUpperCase() + item.mood.slice(1)}</div>
+                    <div class="timeline-energy">⚡ Energy: ${item.energy}/10</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== AI DAILY PLANNER ====================
+function generateDailyPlan() {
+    const suggestionsDiv = document.getElementById('plannerSuggestions');
+    
+    // Show loading state
+    suggestionsDiv.innerHTML = `
+        <div class="planner-loading">
+            <div class="planner-spinner"></div>
+            <div class="planner-loading-text">AI is analyzing your schedule...</div>
+        </div>
+    `;
+    
+    // Simulate AI generation (in real app, this would call an API)
+    setTimeout(() => {
+        const suggestions = [
+            {
+                priority: 'high',
+                type: 'task',
+                title: 'Complete your most important task first',
+                description: 'Based on your goals, focus on the high-impact task you planned.',
+                icon: 'task',
+                actions: ['Add to Tasks', 'Snooze']
+            },
+            {
+                priority: 'medium',
+                type: 'break',
+                title: 'Take a 10-minute break',
+                description: 'Step away from your desk. Stretch, hydrate, or take a short walk.',
+                icon: 'break',
+                actions: ['Start Break', 'Skip']
+            },
+            {
+                priority: 'medium',
+                type: 'focus',
+                title: '25-minute focus session',
+                description: 'Use the Pomodoro technique for deep work on your current project.',
+                icon: 'focus',
+                actions: ['Start Timer', 'Later']
+            },
+            {
+                priority: 'low',
+                type: 'task',
+                title: 'Review and organize your tasks',
+                description: 'End your day by reviewing completed tasks and planning tomorrow.',
+                icon: 'task',
+                actions: ['Open Tasks', 'Remind Later']
+            }
+        ];
+        
+        renderSuggestions(suggestions);
+    }, 1500);
+}
+
+function renderSuggestions(suggestions) {
+    const suggestionsDiv = document.getElementById('plannerSuggestions');
+    
+    suggestionsDiv.innerHTML = suggestions.map(suggestion => `
+        <div class="planner-suggestion-card">
+            <span class="suggestion-priority ${suggestion.priority}">${suggestion.priority.toUpperCase()}</span>
+            <div class="suggestion-content">
+                <div class="suggestion-icon ${suggestion.type}">
+                    <i class="fas fa-${suggestion.icon === 'task' ? 'check-square' : suggestion.icon === 'break' ? 'coffee' : 'clock'}"></i>
+                </div>
+                <div class="suggestion-text">
+                    <div class="suggestion-title">${suggestion.title}</div>
+                    <div class="suggestion-desc">${suggestion.description}</div>
+                </div>
+            </div>
+            <div class="suggestion-actions">
+                ${suggestion.actions.map(action => `
+                    <button class="suggestion-action-btn">${action}</button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Initialize everything
+loadHabits();
+loadMoodHistory();
+updateProductivityScore();
+</script>
+{% endblock %}

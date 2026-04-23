@@ -1,0 +1,270 @@
+/* ============================================
+   3D ANIMATIONS & EFFECTS
+   ============================================ */
+
+/* Floating Animation for 3D Images */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotateY(0deg);
+    }
+    25% {
+        transform: translateY(-10px) rotateY(2deg);
+    }
+    50% {
+        transform: translateY(-5px) rotateY(0deg);
+    }
+    75% {
+        transform: translateY(-15px) rotateY(-2deg);
+    }
+}
+
+@keyframes float-gentle {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.6), 0 0 60px rgba(139, 92, 246, 0.3);
+    }
+}
+
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes rotate-3d {
+    0% {
+        transform: perspective(1000px) rotateY(0deg);
+    }
+    100% {
+        transform: perspective(1000px) rotateY(360deg);
+    }
+}
+
+@keyframes bounce-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slide-up-fade {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes neon-pulse {
+    0%, 100% {
+        border-color: rgba(99, 102, 241, 0.5);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+        border-color: rgba(99, 102, 241, 1);
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.6), 0 0 50px rgba(139, 92, 246, 0.4);
+    }
+}
+
+/* Animation Classes */
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+    animation: float-gentle 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+.animate-bounce-in {
+    animation: bounce-in 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slide-up-fade 0.5s ease-out forwards;
+}
+
+.animate-neon {
+    animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* Staggered Animation Delays */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* 3D Transform Utilities */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+/* Hover 3D Tilt Effect */
+.tilt-3d {
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.tilt-3d:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(20px);
+}
+
+/* Glassmorphism Enhanced */
+.glass-3d {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.37),
+        inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+/* Neon Glow Effects */
+.glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+}
+
+.glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
+}
+
+.glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.3);
+}
+
+.glow-pink {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 40px rgba(236, 72, 153, 0.3);
+}
+
+/* Gradient Borders */
+.gradient-border {
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+}
+
+.gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    padding: 2px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* 3D Card Effect */
+.card-3d {
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(99, 102, 241, 0.3);
+}
+
+/* Floating Image Container */
+.floating-image {
+    animation: float-gentle 4s ease-in-out infinite;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
+}
+
+/* Particle Background Effect */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(99, 102, 241, 0.5);
+    border-radius: 50%;
+    animation: float-gentle 8s ease-in-out infinite;
+}
+
+/* Morphing Blob Effect */
+@keyframes morph {
+    0%, 100% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    50% {
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+}
+
+.blob {
+    animation: morph 8s ease-in-out infinite;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    filter: blur(40px);
+}

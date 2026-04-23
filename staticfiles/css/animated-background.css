@@ -1,0 +1,293 @@
+/* ============================================
+   3D ANIMATED BACKGROUND - PREMIUM SAAS
+   ============================================ */
+
+/* Main Background with Layered Gradients */
+body {
+    background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05), transparent 50%),
+                linear-gradient(135deg, #f8f9fb 0%, #eef0f4 100%);
+    background-attachment: fixed;
+}
+
+/* ============================================
+   FLOATING 3D BLOBS
+   ============================================ */
+
+.bg-blob-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Blob 1 - Purple/Blue */
+.blob1 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0) 70%);
+    top: 10%;
+    left: 5%;
+    animation: float1 20s ease-in-out infinite;
+}
+
+/* Blob 2 - Pink/Rose */
+.blob2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(236, 72, 153, 0) 70%);
+    top: 60%;
+    right: 10%;
+    animation: float2 25s ease-in-out infinite;
+}
+
+/* Blob 3 - Teal/Green */
+.blob3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.25) 0%, rgba(45, 212, 191, 0) 70%);
+    top: 40%;
+    left: 40%;
+    animation: float3 22s ease-in-out infinite;
+}
+
+/* Blob 4 - Additional depth */
+.blob4 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 70%);
+    top: 80%;
+    left: 20%;
+    animation: float4 18s ease-in-out infinite;
+}
+
+/* ============================================
+   ANIMATION KEYFRAMES
+   ============================================ */
+
+@keyframes float1 {
+    0%, 100% { 
+        transform: translate3d(0, 0, 0) scale(1); 
+    }
+    25% { 
+        transform: translate3d(30px, -20px, 0) scale(1.05); 
+    }
+    50% { 
+        transform: translate3d(50px, -40px, 0) scale(1.1); 
+    }
+    75% { 
+        transform: translate3d(20px, -20px, 0) scale(1.05); 
+    }
+}
+
+@keyframes float2 {
+    0%, 100% { 
+        transform: translate3d(0, 0, 0) scale(1); 
+    }
+    33% { 
+        transform: translate3d(-40px, 30px, 0) scale(1.08); 
+    }
+    66% { 
+        transform: translate3d(-30px, 50px, 0) scale(1.12); 
+    }
+}
+
+@keyframes float3 {
+    0%, 100% { 
+        transform: translate3d(0, 0, 0) scale(1); 
+    }
+    20% { 
+        transform: translate3d(25px, 35px, 0) scale(1.06); 
+    }
+    40% { 
+        transform: translate3d(35px, 45px, 0) scale(1.1); 
+    }
+    60% { 
+        transform: translate3d(20px, 30px, 0) scale(1.08); 
+    }
+    80% { 
+        transform: translate3d(15px, 25px, 0) scale(1.04); 
+    }
+}
+
+@keyframes float4 {
+    0%, 100% { 
+        transform: translate3d(0, 0, 0) scale(1); 
+    }
+    50% { 
+        transform: translate3d(-25px, -30px, 0) scale(1.07); 
+    }
+}
+
+/* ============================================
+   GLASSMORPHISM EFFECTS FOR CARDS
+   ============================================ */
+
+.action-card, .card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-card:hover, .card:hover {
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   SIDEBAR GLASS EFFECT
+   ============================================ */
+
+.sidebar {
+    backdrop-filter: blur(10px);
+    background: rgba(248, 249, 251, 0.85);
+    border-right: 1px solid rgba(232, 234, 237, 0.6);
+}
+
+/* ============================================
+   TOP NAVBAR GLASS EFFECT
+   ============================================ */
+
+.top-navbar {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(232, 234, 237, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+/* ============================================
+   SEARCH BOX ENHANCEMENT
+   ============================================ */
+
+.search-box {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(232, 234, 237, 0.6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.search-box:focus-within {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15),
+                0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ============================================
+   BUTTON & ICON ENHANCEMENTS
+   ============================================ */
+
+.icon-btn, .profile-btn {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(232, 234, 237, 0.6);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-btn:hover, .profile-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   CONTENT PROTECTION - ENSURE READABILITY
+   ============================================ */
+
+.main-content {
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar, .top-navbar, .action-card, .card {
+    position: relative;
+    z-index: 2;
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Hardware acceleration for animations */
+.bg-blob {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .bg-blob {
+        animation: none;
+    }
+}
+
+/* Mobile optimization - reduce blob count */
+@media (max-width: 768px) {
+    .blob3, .blob4 {
+        display: none;
+    }
+    
+    .blob1 {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .blob2 {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+/* ============================================
+   GLOWING ACCENT EFFECTS
+   ============================================ */
+
+/* Subtle glow on interactive elements */
+.nav-item.active {
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.2);
+}
+
+.start-chat-btn {
+    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.15);
+}
+
+.start-chat-btn:hover {
+    box-shadow: 0 6px 20px rgba(26, 26, 26, 0.25);
+}
+
+/* ============================================
+   GRADIENT OVERLAY FOR DEPTH
+   ============================================ */
+
+.dashboard-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.3) 100%);
+    pointer-events: none;
+    z-index: 1;
+}

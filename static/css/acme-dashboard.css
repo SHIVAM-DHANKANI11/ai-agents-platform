@@ -1,0 +1,427 @@
+/* ============================================
+   ACME AI DASHBOARD - CLEAN MINIMAL DESIGN
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    flex-shrink: 0;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--text-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-primary);
+    font-size: 18px;
+}
+
+.brand-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Start Chat Button */
+.start-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 16px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.start-chat-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    overflow-y: auto;
+}
+
+.nav-section {
+    margin-bottom: 8px;
+}
+
+.nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    margin-bottom: 4px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+}
+
+.nav-item:hover {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-item.active {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Logout Button Special Styling */
+.nav-item[href*="logout"] {
+    color: var(--danger);
+    margin-top: 8px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+}
+
+.nav-item[href*="logout"]:hover {
+    background: rgba(245, 101, 101, 0.1);
+    color: var(--danger);
+}
+
+/* Expandable Sections */
+.nav-expandable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-expandable:hover {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-expandable-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-subitems {
+    padding-left: 32px;
+    margin-top: 4px;
+}
+
+.nav-subitem {
+    display: block;
+    padding: 8px 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-subitem:hover {
+    color: var(--text-primary);
+    background: var(--bg-glass-hover);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 48px;
+    max-width: 1200px;
+}
+
+/* Welcome Section */
+.welcome-section {
+    margin-bottom: 32px;
+}
+
+.welcome-section h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.welcome-section p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Filter Tabs */
+.content-header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+}
+
+/* ============================================
+   CARD GRID SYSTEM
+   ============================================ */
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.action-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.action-card:hover {
+    border-color: var(--text-muted);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+}
+
+/* Card Icon */
+.card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+}
+
+.card-icon.blue {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+}
+
+.card-icon.green {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.card-icon.purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--accent-secondary);
+}
+
+.card-icon.orange {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--warning);
+}
+
+.card-icon.pink {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+.card-icon.yellow {
+    background: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+}
+
+/* Card Content */
+.action-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.action-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-content {
+        padding: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1001;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 24px;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .welcome-section h1 {
+        font-size: 28px;
+    }
+    
+    .welcome-section p {
+        font-size: 16px;
+    }
+}
+
+/* ============================================
+   UTILITY
+   ============================================ */
+
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 101;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+}

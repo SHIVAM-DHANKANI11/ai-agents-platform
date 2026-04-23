@@ -1,0 +1,303 @@
+/* ============================================
+   SMART BREAK REMINDERS
+   ============================================ */
+
+.break-reminder-widget {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(232, 234, 237, 0.8);
+}
+
+.break-reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.break-reminder-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.break-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    border: 2px solid #10b981;
+}
+
+.break-status.active {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: #f59e0b;
+}
+
+.break-status-icon {
+    font-size: 20px;
+}
+
+.break-status-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.break-timer-display {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 197, 253, 0.05));
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.break-countdown {
+    font-size: 56px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+}
+
+.break-countdown-label {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.break-progress-ring {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+}
+
+.break-progress-circle {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.break-progress-bg {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 8;
+}
+
+.break-progress-bar {
+    fill: none;
+    stroke: url(#gradientBreak);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 565;
+    stroke-dashoffset: 565;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.break-suggestions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.break-suggestion-card {
+    padding: 16px;
+    background: rgba(249, 250, 251, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(232, 234, 237, 0.6);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.break-suggestion-card:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.break-suggestion-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.break-suggestion-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Break Notification Modal */
+.break-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.break-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.break-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.break-modal-overlay.active .break-modal {
+    transform: scale(1);
+}
+
+.break-modal-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+}
+
+.break-modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.break-modal-desc {
+    font-size: 15px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.break-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.break-btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.break-btn-primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.break-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.break-btn-secondary {
+    background: rgba(243, 244, 246, 0.8);
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.break-btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* Settings Toggle */
+.break-settings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: rgba(249, 250, 251, 0.6);
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.break-setting-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.break-toggle {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    background: #e5e7eb;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.break-toggle.active {
+    background: #10b981;
+}
+
+.break-toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.break-toggle.active .break-toggle-knob {
+    transform: translateX(24px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .break-countdown {
+        font-size: 42px;
+    }
+    
+    .break-progress-ring {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .break-suggestions {
+        grid-template-columns: 1fr;
+    }
+    
+    .break-modal {
+        padding: 30px 24px;
+    }
+}

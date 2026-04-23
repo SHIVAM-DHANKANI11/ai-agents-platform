@@ -1,0 +1,405 @@
+/* ============================================
+   FOCUS MUSIC PLAYER - NEUMORPHISM DESIGN
+   Modern Minimal Apple-Inspired UI
+   ============================================ */
+
+.focus-music-widget {
+    background: #f0f2f5;
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 
+        8px 8px 16px rgba(174, 174, 192, 0.3),
+        -8px -8px 16px rgba(255, 255, 255, 0.9);
+    border: none;
+}
+
+.focus-music-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.focus-music-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.3px;
+}
+
+.music-player-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Sound Scapes - Neumorphic Tiles */
+.sound-scapes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 16px;
+}
+
+.sound-scape-card {
+    padding: 20px 16px;
+    background: #f0f2f5;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        6px 6px 12px rgba(174, 174, 192, 0.25),
+        -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.sound-scape-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        8px 8px 16px rgba(174, 174, 192, 0.3),
+        -8px -8px 16px rgba(255, 255, 255, 0.9);
+}
+
+.sound-scape-card.active {
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    box-shadow: 
+        inset 4px 4px 8px rgba(139, 92, 246, 0.3),
+        inset -4px -4px 8px rgba(167, 139, 250, 0.3);
+}
+
+.sound-scape-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+    filter: grayscale(20%);
+    transition: all 0.3s ease;
+}
+
+.sound-scape-card.active .sound-scape-icon {
+    filter: grayscale(0%);
+}
+
+.sound-scape-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    letter-spacing: 0.2px;
+    transition: all 0.3s ease;
+}
+
+.sound-scape-card.active .sound-scape-name {
+    color: white;
+}
+
+/* Volume Control - Neumorphic Slider */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: #f0f2f5;
+    border-radius: 16px;
+    box-shadow: 
+        inset 4px 4px 8px rgba(174, 174, 192, 0.2),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.volume-icon {
+    font-size: 20px;
+    color: #9ca3af;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e7eb;
+    outline: none;
+    -webkit-appearance: none;
+    position: relative;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    cursor: pointer;
+    box-shadow: 
+        2px 2px 4px rgba(167, 139, 250, 0.4),
+        -2px -2px 4px rgba(255, 255, 255, 0.8);
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 
+        3px 3px 6px rgba(167, 139, 250, 0.5),
+        -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    cursor: pointer;
+    border: none;
+    box-shadow: 
+        2px 2px 4px rgba(167, 139, 250, 0.4),
+        -2px -2px 4px rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.volume-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Audio Visualizer - Animated Bars */
+.visualizer-container {
+    padding: 16px;
+    background: #f0f2f5;
+    border-radius: 16px;
+    box-shadow: 
+        inset 4px 4px 8px rgba(174, 174, 192, 0.2),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.audio-visualizer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    height: 48px;
+}
+
+.visualizer-bar {
+    width: 6px;
+    background: linear-gradient(to top, #c4b5fd, #a78bfa, #8b5cf6);
+    border-radius: 3px;
+    animation: visualize 0.6s ease-in-out infinite;
+    transform-origin: bottom;
+}
+
+.visualizer-bar:nth-child(1) { animation-delay: 0.0s; }
+.visualizer-bar:nth-child(2) { animation-delay: 0.1s; }
+.visualizer-bar:nth-child(3) { animation-delay: 0.2s; }
+.visualizer-bar:nth-child(4) { animation-delay: 0.3s; }
+.visualizer-bar:nth-child(5) { animation-delay: 0.4s; }
+.visualizer-bar:nth-child(6) { animation-delay: 0.5s; }
+.visualizer-bar:nth-child(7) { animation-delay: 0.6s; }
+.visualizer-bar:nth-child(8) { animation-delay: 0.7s; }
+
+@keyframes visualize {
+    0%, 100% { 
+        height: 12px;
+        opacity: 0.6;
+    }
+    50% { 
+        height: 36px;
+        opacity: 1;
+    }
+}
+
+.visualizer-container.playing .visualizer-bar {
+    animation-play-state: running;
+}
+
+.visualizer-container.paused .visualizer-bar {
+    animation-play-state: paused;
+    height: 12px;
+    opacity: 0.4;
+}
+
+/* Sleep Timer - Pill Buttons */
+.music-timer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: #f0f2f5;
+    border-radius: 16px;
+    box-shadow: 
+        inset 4px 4px 8px rgba(174, 174, 192, 0.2),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.music-timer-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.music-timer-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.timer-option-btn {
+    padding: 10px 20px;
+    background: #f0f2f5;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        4px 4px 8px rgba(174, 174, 192, 0.2),
+        -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.timer-option-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+        5px 5px 10px rgba(174, 174, 192, 0.25),
+        -5px -5px 10px rgba(255, 255, 255, 0.9);
+}
+
+.timer-option-btn.active {
+    border-color: #a78bfa;
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(139, 92, 246, 0.1));
+    color: #8b5cf6;
+    box-shadow: 
+        inset 3px 3px 6px rgba(167, 139, 250, 0.2),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* Playback Controls - Glowing Circular Buttons */
+.playback-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 12px;
+}
+
+.secondary-control-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #f0f2f5;
+    border: none;
+    color: #6b7280;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        5px 5px 10px rgba(174, 174, 192, 0.25),
+        -5px -5px 10px rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.secondary-control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        6px 6px 12px rgba(174, 174, 192, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.9);
+    color: #374151;
+}
+
+.secondary-control-btn:active {
+    transform: translateY(0);
+    box-shadow: 
+        inset 3px 3px 6px rgba(174, 174, 192, 0.2),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.play-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 
+        0 8px 24px rgba(167, 139, 250, 0.5),
+        0 0 0 8px rgba(167, 139, 250, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.play-btn::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(8px);
+}
+
+.play-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 
+        0 12px 32px rgba(167, 139, 250, 0.6),
+        0 0 0 10px rgba(167, 139, 250, 0.15);
+}
+
+.play-btn:active {
+    transform: scale(0.98);
+    box-shadow: 
+        0 4px 16px rgba(167, 139, 250, 0.4),
+        0 0 0 6px rgba(167, 139, 250, 0.1);
+}
+
+/* Now Playing Label */
+.now-playing-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .focus-music-widget {
+        padding: 24px;
+    }
+    
+    .sound-scapes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .music-timer-options {
+        flex-wrap: wrap;
+    }
+    
+    .play-btn {
+        width: 64px;
+        height: 64px;
+        font-size: 24px;
+    }
+    
+    .secondary-control-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+    }
+}

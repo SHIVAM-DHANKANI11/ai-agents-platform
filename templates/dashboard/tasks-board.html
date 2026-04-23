@@ -1,0 +1,128 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Tasks - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/task-management.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="tasks-page">
+    <!-- Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div>
+            <h1 style="font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+                <i class="fas fa-check-double" style="color: var(--accent-primary);"></i> Task Board
+            </h1>
+            <p style="color: var(--text-muted); font-size: 15px;">Drag and drop to organize your tasks</p>
+        </div>
+        <button class="btn-primary" onclick="window.taskManager.showNotification('Create task modal - coming soon', 'info')">
+            <i class="fas fa-plus"></i> New Task
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="task-filters">
+        <div class="filter-group">
+            <span class="filter-label">Priority:</span>
+            <select class="filter-select" id="filterPriority">
+                <option value="">All</option>
+                <option value="urgent">Urgent</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Category:</span>
+            <select class="filter-select" id="filterCategory">
+                <option value="">All</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="health">Health</option>
+                <option value="learning">Learning</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Search:</span>
+            <input type="text" class="filter-input" id="filterSearch" placeholder="Search tasks...">
+        </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions-bar" id="bulkActionsBar">
+        <div class="bulk-actions-info">
+            <span id="selectedCount">0</span> tasks selected
+        </div>
+        <div class="bulk-actions-buttons">
+            <button class="bulk-action-btn" onclick="window.taskManager.showNotification('Bulk complete - coming soon', 'info')">
+                <i class="fas fa-check"></i> Complete All
+            </button>
+            <button class="bulk-action-btn" onclick="window.taskManager.showNotification('Bulk delete - coming soon', 'info')">
+                <i class="fas fa-trash"></i> Delete All
+            </button>
+            <button class="bulk-action-btn" onclick="clearSelection()">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Task Board -->
+    <div class="task-board">
+        <!-- Todo Column -->
+        <div class="task-column" id="todoColumn">
+            <div class="task-column-header">
+                <div class="task-column-title">
+                    <div class="column-icon todo">
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <span>To Do</span>
+                </div>
+                <span class="task-count" id="todoCount">0</span>
+            </div>
+            <div id="todoTasks" class="task-list">
+                <!-- Tasks will be rendered here -->
+            </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="task-column" id="progressColumn">
+            <div class="task-column-header">
+                <div class="task-column-title">
+                    <div class="column-icon progress">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <span>In Progress</span>
+                </div>
+                <span class="task-count" id="progressCount">0</span>
+            </div>
+            <div id="progressTasks" class="task-list">
+                <!-- Tasks will be rendered here -->
+            </div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="task-column" id="doneColumn">
+            <div class="task-column-header">
+                <div class="task-column-title">
+                    <div class="column-icon done">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <span>Done</span>
+                </div>
+                <span class="task-count" id="doneCount">0</span>
+            </div>
+            <div id="doneTasks" class="task-list">
+                <!-- Tasks will be rendered here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/task-management.js' %}"></script>
+{% endblock %}

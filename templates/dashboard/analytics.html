@@ -1,0 +1,296 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - AI Productivity{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/analytics-charts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-page">
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom: 32px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+                    <i class="fas fa-chart-line" style="color: var(--accent-primary);"></i> Analytics Dashboard
+                </h1>
+                <p style="color: var(--text-muted); font-size: 15px;">Track your productivity and performance metrics</p>
+            </div>
+            <button class="btn-primary" onclick="window.print()">
+                <i class="fas fa-download"></i> Export Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Time Period Selector -->
+    <div class="time-selector">
+        <button class="time-btn" onclick="analyticsDashboard.updatePeriod('week')">This Week</button>
+        <button class="time-btn active" onclick="analyticsDashboard.updatePeriod('month')">This Month</button>
+        <button class="time-btn" onclick="analyticsDashboard.updatePeriod('quarter')">This Quarter</button>
+        <button class="time-btn" onclick="analyticsDashboard.updatePeriod('year')">This Year</button>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-summary">
+        <div class="summary-item">
+            <div class="summary-icon blue">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="summary-value" id="totalTasks">156</div>
+            <div class="summary-label">Total Tasks</div>
+            <div class="summary-change positive">
+                <i class="fas fa-arrow-up"></i> 12% from last month
+            </div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="summary-value" id="completedTasks">98</div>
+            <div class="summary-label">Completed</div>
+            <div class="summary-change positive">
+                <i class="fas fa-arrow-up"></i> 8% from last month
+            </div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-icon orange">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="summary-value" id="completionRate">63%</div>
+            <div class="summary-label">Completion Rate</div>
+            <div class="summary-change positive">
+                <i class="fas fa-arrow-up"></i> 5% improvement
+            </div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-icon purple">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <div class="summary-value" id="activeProjects">12</div>
+            <div class="summary-label">Active Projects</div>
+            <div class="summary-change positive">
+                <i class="fas fa-arrow-up"></i> 2 new
+            </div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-icon red">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="summary-value" id="hoursSaved">47h</div>
+            <div class="summary-label">Time Saved (AI)</div>
+            <div class="summary-change positive">
+                <i class="fas fa-arrow-up"></i> Estimated
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Analytics Grid -->
+    <div class="analytics-grid">
+        <!-- Task Completion Chart -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Task Completion
+                </div>
+                <div class="card-actions">
+                    <button class="card-action-btn active">Weekly</button>
+                    <button class="card-action-btn">Monthly</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="taskCompletionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Productivity Trend -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    Productivity Trend
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="productivityTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Category Distribution -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Task Categories
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Priority Breakdown -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Priority Distribution
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priorityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Weekly Hours -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-clock"></i>
+                    Hours Worked Per Day
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="weeklyHoursChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="analytics-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance Metrics
+                </div>
+            </div>
+            <div class="metrics-list">
+                <div class="metric-item">
+                    <div class="metric-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="metric-info">
+                        <div class="metric-name">Task Efficiency</div>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">85%</div>
+                </div>
+
+                <div class="metric-item">
+                    <div class="metric-icon" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="metric-info">
+                        <div class="metric-name">Goal Achievement</div>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 72%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">72%</div>
+                </div>
+
+                <div class="metric-item">
+                    <div class="metric-icon" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="metric-info">
+                        <div class="metric-name">On-Time Completion</div>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 68%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">68%</div>
+                </div>
+
+                <div class="metric-item">
+                    <div class="metric-icon" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="metric-info">
+                        <div class="metric-name">AI Assistance Used</div>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 91%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">91%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Heatmap -->
+    <div class="analytics-card" style="margin-bottom: 32px;">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-th"></i>
+                Activity Heatmap (Last 90 Days)
+            </div>
+        </div>
+        <div class="heatmap-container" id="activityHeatmap">
+            <!-- Heatmap will be rendered by JS -->
+        </div>
+    </div>
+
+    <!-- AI Insights -->
+    <div class="analytics-card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-lightbulb"></i>
+                AI-Powered Insights
+            </div>
+        </div>
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-icon success">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-title">Peak Performance Day</div>
+                    <div class="insight-text">You're most productive on Thursdays, completing an average of 9 tasks. Schedule important tasks on this day!</div>
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-icon warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-title">Focus Area</div>
+                    <div class="insight-text">Your completion rate drops on weekends. Consider reducing weekend task load or scheduling easier tasks.</div>
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-icon info">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-title">Upward Trend</div>
+                    <div class="insight-text">Your productivity has improved 16% over the last 4 weeks. Keep up the great work!</div>
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-icon success">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="insight-content">
+                    <div class="insight-title">AI Impact</div>
+                    <div class="insight-text">AI assistance saved you approximately 47 hours this month through automation and smart scheduling.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/analytics-charts.js' %}"></script>
+{% endblock %}

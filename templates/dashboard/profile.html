@@ -1,0 +1,263 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Profile - AI Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <!-- Profile Header Card -->
+    <div class="profile-header-card">
+        <div class="profile-cover"></div>
+        <div class="profile-header-content">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar">
+                    {{ user.username|first|upper }}
+                    <div class="avatar-status"></div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-edit" onclick="editProfile()">
+                        <i class="fas fa-pen"></i>
+                        <span>Edit Profile</span>
+                    </button>
+                    <button class="btn-share" onclick="shareProfile()">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Share</span>
+                    </button>
+                </div>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ user.get_full_name|default:user.username }}</h1>
+                <p class="profile-username">@{{ user.username }}</p>
+                <p class="profile-bio">{{ user.profile.bio|default:"AI enthusiast and productivity hacker. Building the future with intelligent tools." }}</p>
+                <div class="profile-meta">
+                    <div class="profile-meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ user.profile.location|default:"San Francisco, CA" }}</span>
+                    </div>
+                    <div class="profile-meta-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ user.email }}</span>
+                    </div>
+                    <div class="profile-meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Joined {{ user.date_joined|date:"F Y" }}</span>
+                    </div>
+                    <div class="profile-meta-item">
+                        <i class="fas fa-globe"></i>
+                        <span>{{ user.profile.website|default:"website.com" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Row -->
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-value">{{ total_chats|default:"24" }}</div>
+            <div class="stat-label">AI Chats</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value">{{ completed_tasks|default:"156" }}</div>
+            <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-value">{{ total_files|default:"48" }}</div>
+            <div class="stat-label">Files</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">{{ days_active|default:"32" }}</div>
+            <div class="stat-label">Days Active</div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="profile-content">
+        <!-- Left Column -->
+        <div class="content-main">
+            <!-- Recent Activity -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Recent Activity
+                    </h3>
+                    <a href="#" class="btn-view-all">View All</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon chat">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">Started a new <strong>AI Chat</strong> about project planning</p>
+                            <span class="activity-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon task">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">Completed task <strong>"Review Q1 Report"</strong></p>
+                            <span class="activity-time">5 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon file">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">Uploaded <strong>Project_Specs.pdf</strong></p>
+                            <span class="activity-time">Yesterday</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon login">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">Logged in from <strong>Chrome on MacOS</strong></p>
+                            <span class="activity-time">2 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skills -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-star"></i>
+                        Skills & Expertise
+                    </h3>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-tag">Artificial Intelligence</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Data Analysis</span>
+                    <span class="skill-tag">Project Management</span>
+                    <span class="skill-tag">Productivity</span>
+                    <span class="skill-tag">Automation</span>
+                    <span class="skill-tag">ChatGPT</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar -->
+        <div class="content-sidebar">
+            <!-- Achievements -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">
+                    <i class="fas fa-trophy"></i>
+                    Achievements
+                </h3>
+                <div class="achievement-list">
+                    <div class="achievement-item">
+                        <div class="achievement-badge gold">🏆</div>
+                        <div class="achievement-info">
+                            <h4>Power User</h4>
+                            <p>Used AI for 30 days straight</p>
+                        </div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-badge silver">🥈</div>
+                        <div class="achievement-info">
+                            <h4>Task Master</h4>
+                            <p>Completed 100+ tasks</p>
+                        </div>
+                    </div>
+                    <div class="achievement-item">
+                        <div class="achievement-badge bronze">🥉</div>
+                        <div class="achievement-info">
+                            <h4>Early Adopter</h4>
+                            <p>Joined in the first month</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Members -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">
+                    <i class="fas fa-users"></i>
+                    Team Members
+                </h3>
+                <div class="team-list">
+                    <div class="team-member">
+                        <div class="member-avatar">JD</div>
+                        <div class="member-info">
+                            <h4>John Doe</h4>
+                            <p>Product Manager</p>
+                        </div>
+                        <div class="member-status"></div>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #10b981, #34d399);">AS</div>
+                        <div class="member-info">
+                            <h4>Alice Smith</h4>
+                            <p>Designer</p>
+                        </div>
+                        <div class="member-status"></div>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">MJ</div>
+                        <div class="member-info">
+                            <h4>Mike Johnson</h4>
+                            <p>Developer</p>
+                        </div>
+                        <div class="member-status away"></div>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #f87171);">SK</div>
+                        <div class="member-info">
+                            <h4>Sarah Kim</h4>
+                            <p>Marketing</p>
+                        </div>
+                        <div class="member-status offline"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function editProfile() {
+        window.location.href = '/settings/';
+    }
+    
+    function shareProfile() {
+        if (navigator.share) {
+            navigator.share({
+                title: '{{ user.username }}\'s Profile',
+                text: 'Check out my AI Dashboard profile!',
+                url: window.location.href
+            });
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href);
+            alert('Profile link copied to clipboard!');
+        }
+    }
+</script>
+{% endblock %}
